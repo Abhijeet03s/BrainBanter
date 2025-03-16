@@ -9,7 +9,9 @@ dist/
 web-build/
 expo-env.d.ts
 .cursorrules
+.cursor/rules
 plan.md
+.env
 
 # Native
 *.orig.*
@@ -33,10 +35,26 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
 
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
+out/
+
+# Logs
+logs/
+*.log
+
 app-example
-.vscode
-.vscode/*

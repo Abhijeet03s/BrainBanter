@@ -1,8 +1,42 @@
-# Welcome to your Expo app 👋
+# BrainBanter
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+BrainBanter is an AI-powered debate platform that challenges users with follow-up questions, provides alternative perspectives, and visually maps out conversations.
 
-## Get started
+## Project Structure
+
+The project follows a structured organization pattern:
+
+```
+brainbanter/
+├── src/                           # All application code
+│   ├── app/                       # Expo Router pages
+│   ├── assets/                    # Static assets (images, fonts)
+│   ├── components/                # Reusable components
+│   ├── contexts/                  # React contexts
+│   ├── hooks/                     # Custom hooks
+│   ├── lib/                       # Third-party library configurations
+│   ├── services/                  # API and external services
+│   ├── state/                     # State management (Zustand)
+│   ├── types/                     # TypeScript type definitions
+│   ├── utils/                     # Helper functions
+│   └── constants/                 # App constants
+├── .expo/                         # Expo configuration
+├── node_modules/                  # Dependencies
+├── scripts/                       # Build and utility scripts
+├── .env                           # Environment variables
+├── app.json                       # Expo app configuration
+├── babel.config.js                # Babel configuration
+├── global.css                     # Global styles
+├── metro.config.js                # Metro bundler config
+├── package.json                   # Dependencies and scripts
+├── tailwind.config.js             # Tailwind CSS configuration
+├── tsconfig.json                  # TypeScript configuration
+└── README.md                      # Project documentation
+```
+
+For more detailed information about the codebase structure, see [src/README.md](src/README.md).
+
+## Getting Started
 
 1. Install dependencies
 
@@ -13,38 +47,20 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-    npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+## Development
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Styling**: The project uses NativeWind (Tailwind CSS for React Native)
+- **State Management**: Zustand for lightweight state management
+- **Navigation**: React Navigation with Expo Router
+- **Authentication**: Supabase auth
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Features
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- AI-powered debate chat interface
+- Mind map visualization of debates
+- User authentication and profiles
+- Saved sessions and notes
+- Customizable AI behavior
