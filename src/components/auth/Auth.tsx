@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native'
+import { Alert, View, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native'
 import { useRouter } from 'expo-router'
-import { useAuth } from '../../contexts/AuthContext'
-
-interface AuthProps {
-   mode?: 'login' | 'register'
-}
+import { useAuth } from '@/contexts/AuthContext'
+import { AuthProps } from '@/types/auth'
 
 export default function Auth({ mode = 'login' }: AuthProps) {
    const [email, setEmail] = useState('')
@@ -67,122 +64,99 @@ export default function Auth({ mode = 'login' }: AuthProps) {
    }
 
    return (
-      <View style={styles.container}>
-         {mode === 'register' && (
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-               <Text style={styles.label}>Username</Text>
+      <View className="flex-1 px-6 pt-8 pb-8 bg-white dark:bg-gray-900">
+         <View className="pt-32">
+            <Text className="text-5xl font-bold text-center text-gray-900 dark:text-white mb-1">
+               BrainBanter
+            </Text>
+         </View>
+
+         <View className="flex-1 justify-center">
+            <View className="mb-6 items-center">
+               <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center">
+                  {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+               </Text>
+               <Text className="text-gray-500 dark:text-gray-400 mb-6 text-center">
+                  {mode === 'login'
+                     ? 'Sign in to continue to BrainBanter'
+                     : 'Fill in your details to get started'}
+               </Text>
+            </View>
+
+            {mode === 'register' && (
+               <View className="mb-4">
+                  <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</Text>
+                  <TextInput
+                     className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                     onChangeText={(text: string) => setUsername(text)}
+                     value={username}
+                     placeholder="Username"
+                     placeholderTextColor="#9CA3AF"
+                     autoCapitalize="none"
+                     editable={!loading}
+                  />
+               </View>
+            )}
+
+            <View className="mb-4">
+               <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</Text>
                <TextInput
-                  style={styles.input}
-                  onChangeText={(text: string) => setUsername(text)}
-                  value={username}
-                  placeholder="username"
+                  className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                  onChangeText={(text: string) => setEmail(text)}
+                  value={email}
+                  placeholder="Email address"
+                  placeholderTextColor="#9CA3AF"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  editable={!loading}
+               />
+            </View>
+
+            <View className="mb-6">
+               <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</Text>
+               <TextInput
+                  className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                  onChangeText={(text: string) => setPassword(text)}
+                  value={password}
+                  secureTextEntry={true}
+                  placeholder="Password"
+                  placeholderTextColor="#9CA3AF"
                   autoCapitalize="none"
                   editable={!loading}
                />
             </View>
-         )}
-         <View style={[styles.verticallySpaced, styles.mt20]}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-               style={styles.input}
-               onChangeText={(text: string) => setEmail(text)}
-               value={email}
-               placeholder="email@address.com"
-               autoCapitalize="none"
-               keyboardType="email-address"
-               editable={!loading}
-            />
-         </View>
-         <View style={styles.verticallySpaced}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-               style={styles.input}
-               onChangeText={(text: string) => setPassword(text)}
-               value={password}
-               secureTextEntry={true}
-               placeholder="Password"
-               autoCapitalize="none"
-               editable={!loading}
-            />
-         </View>
-         <View style={[styles.verticallySpaced, styles.mt20]}>
+
             <TouchableOpacity
-               style={[styles.button, loading && styles.buttonDisabled]}
+               className={`py-3 px-4 rounded-lg items-center justify-center mb-4 ${loading ? 'bg-blue-400' : 'bg-blue-500'}`}
                disabled={loading}
                onPress={handleSubmit}>
                {loading ? (
                   <ActivityIndicator size="small" color="white" />
                ) : (
-                  <Text style={styles.buttonText}>
-                     {mode === 'login' ? 'Sign in' : 'Sign up'}
+                  <Text className="text-white font-semibold text-base">
+                     {mode === 'login' ? 'Sign In' : 'Create Account'}
                   </Text>
                )}
             </TouchableOpacity>
-         </View>
-         <View style={styles.verticallySpaced}>
-            {mode === 'login' ? (
-               <TouchableOpacity
-                  style={styles.linkButton}
-                  disabled={loading}
-                  onPress={navigateToRegister}>
-                  <Text style={styles.linkText}>Don't have an account? Sign up</Text>
-               </TouchableOpacity>
-            ) : (
-               <TouchableOpacity
-                  style={styles.linkButton}
-                  disabled={loading}
-                  onPress={navigateToLogin}>
-                  <Text style={styles.linkText}>Already have an account? Sign in</Text>
-               </TouchableOpacity>
-            )}
+
+            <View className="flex-row justify-center">
+               {mode === 'login' ? (
+                  <TouchableOpacity
+                     className="p-2"
+                     disabled={loading}
+                     onPress={navigateToRegister}>
+                     <Text className="text-blue-600 dark:text-blue-400">Don't have an account? Sign up</Text>
+                  </TouchableOpacity>
+               ) : (
+                  <TouchableOpacity
+                     className="p-2"
+                     disabled={loading}
+                     onPress={navigateToLogin}>
+                     <Text className="text-blue-600 dark:text-blue-400">Already have an account? Sign in</Text>
+                  </TouchableOpacity>
+               )}
+            </View>
          </View>
       </View>
    )
-}
-
-const styles = StyleSheet.create({
-   container: {
-      marginTop: 20,
-      padding: 12,
-   },
-   verticallySpaced: {
-      paddingTop: 4,
-      paddingBottom: 4,
-      alignSelf: 'stretch',
-   },
-   mt20: {
-      marginTop: 20,
-   },
-   input: {
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 4,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      marginTop: 4,
-   },
-   label: {
-      marginBottom: 4,
-      fontWeight: '500',
-   },
-   button: {
-      backgroundColor: '#0284c7',
-      padding: 10,
-      borderRadius: 4,
-      alignItems: 'center',
-   },
-   buttonDisabled: {
-      backgroundColor: '#9ca3af',
-   },
-   buttonText: {
-      color: 'white',
-      fontWeight: '600',
-   },
-   linkButton: {
-      padding: 10,
-      alignItems: 'center',
-   },
-   linkText: {
-      color: '#0284c7',
-   },
-}) 
+} 

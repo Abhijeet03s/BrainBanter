@@ -1,20 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { authAPI } from '@/lib/supabase';
-
-interface User {
-   id: string;
-   username: string;
-   email: string;
-   role: string;
-}
-
-type AuthContextType = {
-   user: User | null;
-   loading: boolean;
-   signIn: (email: string, password: string) => Promise<void>;
-   signUp: (username: string, email: string, password: string) => Promise<void>;
-   signOut: () => Promise<void>;
-};
+import { AuthContextType, User } from '@/types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

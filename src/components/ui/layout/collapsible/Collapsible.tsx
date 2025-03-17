@@ -31,7 +31,6 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
     </ThemedView>
   );
 }
-
 const styles = StyleSheet.create({
   heading: {
     flexDirection: 'row',
@@ -43,3 +42,4 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
 });
+
