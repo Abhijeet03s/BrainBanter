@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText } from '../../components/ThemedText';
+import { ThemedText } from '@/components/ui/typography/themed/ThemedText';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function HomeTab() {
