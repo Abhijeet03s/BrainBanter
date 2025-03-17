@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+
+   /* Primary Font for Headlines & Key UI Elements */
+   h1,
+   h2,
+   h3,
+   h4,
+   h5,
+   h6,
+   button,
+   .headline {
+      @apply font-poppins;
+   }
+
+   /* Secondary Font for Chat, Body Text, and Mind Map Labels */
+   body,
+   p,
+   div,
+   .chat-text,
+   .body-text,
+   .mind-map-label {
+      @apply font-lora;
+   }
+
+   /* Code/AI Output Font for AI responses */
+   pre,
+   code,
+   .ai-output,
+   .code-block {
+      @apply font-firaCode;
+   }
+}

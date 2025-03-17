@@ -65,12 +65,6 @@ export default function Auth({ mode = 'login' }: AuthProps) {
 
    return (
       <View className="flex-1 px-6 pt-8 pb-8 bg-white dark:bg-gray-900">
-         <View className="pt-32">
-            <Text className="text-5xl font-bold text-center text-gray-900 dark:text-white mb-1">
-               BrainBanter
-            </Text>
-         </View>
-
          <View className="flex-1 justify-center">
             <View className="mb-6 items-center">
                <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center">
