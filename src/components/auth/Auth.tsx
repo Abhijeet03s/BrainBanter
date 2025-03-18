@@ -110,7 +110,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                   {mode === 'register' && (
                      <View className="mb-5">
                         <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
-                           Username
+                           Username <Text style={{ color: '#ff4040' }}>*</Text>
                         </Text>
                         <TextInput
                            style={{ fontFamily: 'Lora-Regular' }}
@@ -127,7 +127,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
 
                   <View className="mb-5">
                      <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
-                        Email
+                        Email {mode === 'register' && <Text style={{ color: '#ff4040' }}>*</Text>}
                      </Text>
                      <TextInput
                         style={{ fontFamily: 'Lora-Regular' }}
@@ -144,7 +144,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
 
                   <View className="mb-6">
                      <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
-                        Password
+                        Password {mode === 'register' && <Text style={{ color: '#ff4040' }}>*</Text>}
                      </Text>
                      <TextInput
                         style={{ fontFamily: 'Lora-Regular' }}
