@@ -5,7 +5,7 @@ import Auth from '../../components/auth/Auth';
 
 export default function LoginScreen() {
    return (
-      <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={['top', 'bottom', 'left', 'right']}>
+      <SafeAreaView className="flex-1 bg-gray-950" edges={['top', 'bottom', 'left', 'right']}>
          <Auth mode="login" />
       </SafeAreaView>
    );

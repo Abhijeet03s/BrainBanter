@@ -102,6 +102,28 @@ export const authAPI = {
       }
    },
 
+   // Forgot password function
+   forgotPassword: async (email: string): Promise<void> => {
+      try {
+         // Call our backend API for password reset
+         const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to send password reset email');
+         }
+      } catch (error) {
+         console.error('Error in forgotPassword:', error);
+         throw error;
+      }
+   },
+
    // Get current user from backend
    getCurrentUser: async (): Promise<User | null> => {
       try {

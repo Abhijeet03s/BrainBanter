@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Alert, View, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native'
+import { Alert, View, TextInput, TouchableOpacity, ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useAuth } from '@/contexts/AuthContext'
 import { AuthProps } from '@/types/auth'
+import { LinearGradient } from 'expo-linear-gradient'
 
 export default function Auth({ mode = 'login' }: AuthProps) {
    const [email, setEmail] = useState('')
@@ -63,94 +64,159 @@ export default function Auth({ mode = 'login' }: AuthProps) {
       router.push('/auth/login')
    }
 
+   const navigateToForgotPassword = () => {
+      router.push('/auth/forgot-password')
+   }
+
    return (
-      <View className="flex-1 px-6 pt-8 pb-8 bg-white dark:bg-gray-900">
-         <View className="flex-1 justify-center">
-            <View className="mb-6 items-center">
-               <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center">
-                  {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-               </Text>
-               <Text className="text-gray-500 dark:text-gray-400 mb-6 text-center">
-                  {mode === 'login'
-                     ? 'Sign in to continue to BrainBanter'
-                     : 'Fill in your details to get started'}
-               </Text>
-            </View>
+      <KeyboardAvoidingView
+         behavior={Platform.OS === 'ios' || Platform.OS === 'android' ? 'padding' : 'height'}
+         className="flex-1"
+      >
+         <ScrollView
+            className="flex-1 bg-gray-950"
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+         >
+            <LinearGradient
+               colors={['rgba(138, 43, 226, 0.05)', 'rgba(0, 163, 255, 0.05)']}
+               className="absolute top-0 left-0 right-0 bottom-0"
+               start={{ x: 0, y: 0 }}
+               end={{ x: 1, y: 1 }}
+            />
 
-            {mode === 'register' && (
-               <View className="mb-4">
-                  <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</Text>
-                  <TextInput
-                     className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-                     onChangeText={(text: string) => setUsername(text)}
-                     value={username}
-                     placeholder="Username"
-                     placeholderTextColor="#9CA3AF"
-                     autoCapitalize="none"
-                     editable={!loading}
-                  />
-               </View>
-            )}
-
-            <View className="mb-4">
-               <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</Text>
-               <TextInput
-                  className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-                  onChangeText={(text: string) => setEmail(text)}
-                  value={email}
-                  placeholder="Email address"
-                  placeholderTextColor="#9CA3AF"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  editable={!loading}
-               />
-            </View>
-
-            <View className="mb-6">
-               <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</Text>
-               <TextInput
-                  className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-                  onChangeText={(text: string) => setPassword(text)}
-                  value={password}
-                  secureTextEntry={true}
-                  placeholder="Password"
-                  placeholderTextColor="#9CA3AF"
-                  autoCapitalize="none"
-                  editable={!loading}
-               />
-            </View>
-
-            <TouchableOpacity
-               className={`py-3 px-4 rounded-lg items-center justify-center mb-4 ${loading ? 'bg-blue-400' : 'bg-blue-500'}`}
-               disabled={loading}
-               onPress={handleSubmit}>
-               {loading ? (
-                  <ActivityIndicator size="small" color="white" />
-               ) : (
-                  <Text className="text-white font-semibold text-base">
-                     {mode === 'login' ? 'Sign In' : 'Create Account'}
+            <View className="flex-1 px-8 justify-center">
+               {/* Logo/App Icon */}
+               <View className="items-center mb-8">
+                  <View className="w-20 h-20 bg-[#00A3FF] rounded-2xl items-center justify-center mb-4">
+                     <Image
+                        source={require('@/assets/images/icon.png')}
+                        className="w-12 h-12"
+                        resizeMode="contain"
+                     />
+                  </View>
+                  <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-4xl font-bold text-white mb-1 text-center">
+                     {mode === 'login' ? 'Welcome Back' : 'Join BrainBanter'}
                   </Text>
-               )}
-            </TouchableOpacity>
+                  <Text style={{ fontFamily: 'Lora-Regular' }} className="text-gray-300 mb-2 text-center">
+                     {mode === 'login'
+                        ? 'Challenge your thinking with AI-powered debates'
+                        : 'Create an account to start intellectual conversations'}
+                  </Text>
+               </View>
 
-            <View className="flex-row justify-center">
-               {mode === 'login' ? (
+               {/* Form Fields */}
+               <View className="bg-gray-900/50 rounded-3xl p-6 border border-gray-800/50 shadow-lg mb-6">
+                  {mode === 'register' && (
+                     <View className="mb-5">
+                        <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
+                           Username
+                        </Text>
+                        <TextInput
+                           style={{ fontFamily: 'Lora-Regular' }}
+                           className="bg-gray-900 rounded-xl border border-gray-800 px-4 py-4 text-white"
+                           onChangeText={(text: string) => setUsername(text)}
+                           value={username}
+                           placeholder="Choose a unique username"
+                           placeholderTextColor="#9CA3AF"
+                           autoCapitalize="none"
+                           editable={!loading}
+                        />
+                     </View>
+                  )}
+
+                  <View className="mb-5">
+                     <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
+                        Email
+                     </Text>
+                     <TextInput
+                        style={{ fontFamily: 'Lora-Regular' }}
+                        className="bg-gray-900 rounded-xl border border-gray-800 px-4 py-4 text-white"
+                        onChangeText={(text: string) => setEmail(text)}
+                        value={email}
+                        placeholder="Enter your email address"
+                        placeholderTextColor="#9CA3AF"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        editable={!loading}
+                     />
+                  </View>
+
+                  <View className="mb-6">
+                     <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
+                        Password
+                     </Text>
+                     <TextInput
+                        style={{ fontFamily: 'Lora-Regular' }}
+                        className="bg-gray-900 rounded-xl border border-gray-800 px-4 py-4 text-white"
+                        onChangeText={(text: string) => setPassword(text)}
+                        value={password}
+                        secureTextEntry={true}
+                        placeholder="Enter your password"
+                        placeholderTextColor="#9CA3AF"
+                        autoCapitalize="none"
+                        editable={!loading}
+                     />
+                  </View>
+
+                  {/* Sign in button (solid) */}
                   <TouchableOpacity
-                     className="p-2"
                      disabled={loading}
-                     onPress={navigateToRegister}>
-                     <Text className="text-blue-600 dark:text-blue-400">Don't have an account? Sign up</Text>
+                     onPress={handleSubmit}
+                     className={`py-4 px-4 rounded-xl items-center justify-center mb-4 ${loading ? 'bg-blue-700' : 'bg-[#00A3FF]'}`}
+                  >
+                     {loading ? (
+                        <ActivityIndicator size="small" color="white" />
+                     ) : (
+                        <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-white font-bold text-base">
+                           {mode === 'login' ? 'Sign In' : 'Create Account'}
+                        </Text>
+                     )}
                   </TouchableOpacity>
-               ) : (
-                  <TouchableOpacity
-                     className="p-2"
-                     disabled={loading}
-                     onPress={navigateToLogin}>
-                     <Text className="text-blue-600 dark:text-blue-400">Already have an account? Sign in</Text>
-                  </TouchableOpacity>
-               )}
+
+                  {mode === 'login' && (
+                     <TouchableOpacity
+                        className="items-end mb-2"
+                        onPress={navigateToForgotPassword}
+                        disabled={loading}
+                     >
+                        <Text style={{ fontFamily: 'Poppins-Regular' }} className="text-[#00A3FF] text-sm">
+                           Forgot password?
+                        </Text>
+                     </TouchableOpacity>
+                  )}
+               </View>
+
+               {/* Footer links */}
+               <View className="flex-row justify-center items-center mb-4">
+                  <View className="h-[1px] flex-1 bg-gray-800/50" />
+                  <Text style={{ fontFamily: 'Poppins-Regular' }} className="text-gray-400 mx-3">or</Text>
+                  <View className="h-[1px] flex-1 bg-gray-800/50" />
+               </View>
+
+               <View className="flex-row justify-center">
+                  {mode === 'login' ? (
+                     <TouchableOpacity
+                        className="p-2"
+                        disabled={loading}
+                        onPress={navigateToRegister}>
+                        <Text style={{ fontFamily: 'Poppins-Regular' }} className="text-gray-300">
+                           Don't have an account? <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-[#2EFF9A] font-bold">Sign up</Text>
+                        </Text>
+                     </TouchableOpacity>
+                  ) : (
+                     <TouchableOpacity
+                        className="p-2"
+                        disabled={loading}
+                        onPress={navigateToLogin}>
+                        <Text style={{ fontFamily: 'Poppins-Regular' }} className="text-gray-300">
+                           Already have an account? <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-[#2EFF9A] font-bold">Sign in</Text>
+                        </Text>
+                     </TouchableOpacity>
+                  )}
+               </View>
             </View>
-         </View>
-      </View>
+         </ScrollView>
+      </KeyboardAvoidingView>
    )
 } 

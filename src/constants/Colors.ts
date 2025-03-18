@@ -1,26 +1,29 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Primary and accent colors from the design plan
+const primaryBlue = '#00A3FF';  // Neon Blue - Represents intelligence and futuristic AI
+const secondaryPurple = '#8A2BE2';  // Electric Purple - Adds contrast and creative spark
+const accentGreen = '#2EFF9A';  // Cyber Green - For highlights
+const darkBackground = '#121212';  // Deep Charcoal Black - Reduces eye strain
+const lightText = '#EAEAEA';  // Soft White - Ensures high contrast for readability
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#fff',
-    tint: tintColorLight,
+    tint: primaryBlue,
     icon: '#687076',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: primaryBlue,
+    accent: accentGreen,
+    secondary: secondaryPurple,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
+    text: lightText,
+    background: darkBackground,
+    tint: primaryBlue,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    tabIconSelected: primaryBlue,
+    accent: accentGreen,
+    secondary: secondaryPurple,
   },
 };

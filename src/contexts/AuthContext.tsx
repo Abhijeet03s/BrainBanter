@@ -68,8 +68,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
    };
 
+   const forgotPassword = async (email: string) => {
+      try {
+         setLoading(true);
+         await authAPI.forgotPassword(email);
+      } catch (error) {
+         console.error('Error resetting password:', error);
+         throw error;
+      } finally {
+         setLoading(false);
+      }
+   };
+
    return (
-      <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+      <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, forgotPassword }}>
          {children}
       </AuthContext.Provider>
    );
