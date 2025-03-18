@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../../global.css';
@@ -16,17 +17,39 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [fontsLoaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+
+  // Restore all fonts with improved error handling
+  const [fontsLoaded, fontError] = useFonts({
+    // Primary font - Poppins
+    'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
+    'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
+    'Poppins-SemiBold': require('../assets/fonts/Poppins-SemiBold.ttf'),
+    'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+
+    // Secondary font - Lora
+    'Lora-Regular': require('../assets/fonts/Lora-Regular.ttf'),
+    'Lora-Medium': require('../assets/fonts/Lora-Medium.ttf'),
+    'Lora-SemiBold': require('../assets/fonts/Lora-SemiBold.ttf'),
+    'Lora-Bold': require('../assets/fonts/Lora-Bold.ttf'),
+
+    // Code/AI Output font - FiraCode
+    'FiraCode-Regular': require('../assets/fonts/FiraCode-Regular.ttf'),
+    'FiraCode-Medium': require('../assets/fonts/FiraCode-Medium.ttf'),
+    'FiraCode-SemiBold': require('../assets/fonts/FiraCode-SemiBold.ttf'),
+
+    // Legacy font
+    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => {
+      });
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded) {
+  // Show a loading indicator if fonts are still loading
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 
