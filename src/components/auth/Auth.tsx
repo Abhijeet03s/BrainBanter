@@ -92,15 +92,23 @@ export default function Auth({ mode = 'login' }: AuthProps) {
             />
 
             <View className="flex-1 px-8 justify-center">
-               {/* Logo/App Icon */}
+               {/* Logo/App Icon  */}
                <View className="items-center mb-8">
-                  <View className="w-20 h-20 bg-[#00A3FF] rounded-2xl items-center justify-center mb-6">
+                  <View className="w-20 h-20 rounded-2xl overflow-hidden mb-6 shadow-lg"
+                     style={{
+                        shadowColor: '#00A3FF',
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.7,
+                        shadowRadius: 10,
+                        elevation: 10
+                     }}>
                      <Image
-                        source={require('@/assets/images/icon.png')}
-                        className="w-12 h-12"
-                        resizeMode="contain"
+                        source={require('@/assets/images/bb-logo.png')}
+                        className="w-full h-full"
+                        resizeMode="cover"
                      />
                   </View>
+
                   <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-4xl font-bold text-white mb-1 text-center">
                      {mode === 'login' ? 'Welcome' : 'Join BrainBanter'}
                   </Text>
@@ -178,7 +186,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                      </View>
                   </View>
 
-                  {/* Sign in button (solid) */}
+                  {/* Sign in button */}
                   <TouchableOpacity
                      disabled={loading}
                      onPress={handleSubmit}
