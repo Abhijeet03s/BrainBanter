@@ -4,12 +4,14 @@ import { useRouter } from 'expo-router'
 import { useAuth } from '@/contexts/AuthContext'
 import { AuthProps } from '@/types/auth'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Ionicons } from '@expo/vector-icons'
 
 export default function Auth({ mode = 'login' }: AuthProps) {
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
    const [username, setUsername] = useState('')
    const [loading, setLoading] = useState(false)
+   const [passwordVisible, setPasswordVisible] = useState(false)
    const router = useRouter()
    const { signIn, signUp } = useAuth()
 
@@ -68,6 +70,10 @@ export default function Auth({ mode = 'login' }: AuthProps) {
       router.push('/auth/forgot-password')
    }
 
+   const togglePasswordVisibility = () => {
+      setPasswordVisible(!passwordVisible)
+   }
+
    return (
       <KeyboardAvoidingView
          behavior={Platform.OS === 'ios' || Platform.OS === 'android' ? 'padding' : 'height'}
@@ -88,7 +94,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
             <View className="flex-1 px-8 justify-center">
                {/* Logo/App Icon */}
                <View className="items-center mb-8">
-                  <View className="w-20 h-20 bg-[#00A3FF] rounded-2xl items-center justify-center mb-4">
+                  <View className="w-20 h-20 bg-[#00A3FF] rounded-2xl items-center justify-center mb-6">
                      <Image
                         source={require('@/assets/images/icon.png')}
                         className="w-12 h-12"
@@ -96,7 +102,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                      />
                   </View>
                   <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-4xl font-bold text-white mb-1 text-center">
-                     {mode === 'login' ? 'Welcome Back' : 'Join BrainBanter'}
+                     {mode === 'login' ? 'Welcome' : 'Join BrainBanter'}
                   </Text>
                   <Text style={{ fontFamily: 'Lora-Regular' }} className="text-gray-300 mb-2 text-center">
                      {mode === 'login'
@@ -146,17 +152,30 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                      <Text style={{ fontFamily: 'Poppins-Medium' }} className="text-sm font-medium text-gray-300 mb-2">
                         Password {mode === 'register' && <Text style={{ color: '#ff4040' }}>*</Text>}
                      </Text>
-                     <TextInput
-                        style={{ fontFamily: 'Lora-Regular' }}
-                        className="bg-gray-900 rounded-xl border border-gray-800 px-4 py-4 text-white"
-                        onChangeText={(text: string) => setPassword(text)}
-                        value={password}
-                        secureTextEntry={true}
-                        placeholder="Enter your password"
-                        placeholderTextColor="#9CA3AF"
-                        autoCapitalize="none"
-                        editable={!loading}
-                     />
+                     <View className="relative flex-row bg-gray-900 rounded-xl border border-gray-800">
+                        <TextInput
+                           style={{ fontFamily: 'Lora-Regular', flex: 1 }}
+                           className="px-4 py-4 text-white"
+                           onChangeText={(text: string) => setPassword(text)}
+                           value={password}
+                           secureTextEntry={!passwordVisible}
+                           placeholder="Enter your password"
+                           placeholderTextColor="#9CA3AF"
+                           autoCapitalize="none"
+                           editable={!loading}
+                        />
+                        <TouchableOpacity
+                           onPress={togglePasswordVisibility}
+                           className="pr-4 justify-center"
+                           disabled={loading}
+                        >
+                           <Ionicons
+                              name={passwordVisible ? "eye-off" : "eye"}
+                              size={20}
+                              color={loading ? "#666" : "#9CA3AF"}
+                           />
+                        </TouchableOpacity>
+                     </View>
                   </View>
 
                   {/* Sign in button (solid) */}
