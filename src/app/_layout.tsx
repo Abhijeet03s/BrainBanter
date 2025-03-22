@@ -4,13 +4,11 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { View, Text } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../../global.css';
-import { AuthProvider } from '../contexts/AuthContext';
-
-import { useColorScheme } from '../hooks/useColorScheme';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -60,7 +58,8 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="auth" options={{ headerShown: false }} />
-            <Stack.Screen name="debate" options={{ presentation: 'modal', headerShown: true }} />
+            <Stack.Screen name="debate/[id]" options={{ presentation: 'modal', headerShown: true }} />
+            <Stack.Screen name="debate/new" options={{ presentation: 'modal', headerShown: true }} />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>

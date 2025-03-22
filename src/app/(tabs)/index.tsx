@@ -8,7 +8,7 @@ import { ThemedText as Text } from '@/components/ui/typography/themed/ThemedText
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAuth } from '@/contexts/AuthContext';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
-import { features } from '@/constants/index';
+import { features } from '@/constants/Homepage';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
