@@ -58,8 +58,8 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="auth" options={{ headerShown: false }} />
-            <Stack.Screen name="debate/[id]" options={{ presentation: 'modal', headerShown: true }} />
-            <Stack.Screen name="debate/new" options={{ presentation: 'modal', headerShown: true }} />
+            <Stack.Screen name="debate/[id]" options={{ headerShown: true }} />
+            <Stack.Screen name="debate/new" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
