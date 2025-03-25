@@ -30,7 +30,6 @@ export default function HomeScreen() {
     ]).start();
   }, []);
 
-
   // Safe way to get username
   const getUserName = () => {
     if (!user) return 'User';
