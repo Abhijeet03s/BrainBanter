@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { TouchableOpacity, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from '../typography/themed/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +17,7 @@ interface GradientButtonProps {
    iconPosition?: 'left' | 'right';
 }
 
-export const GradientButton: React.FC<GradientButtonProps> = ({
+export const GradientButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, GradientButtonProps>(({
    onPress,
    text,
    colors = ['#00A3FF', '#0072FF'],
@@ -29,7 +29,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
    borderRadius = 9999, // Default to full rounded (pill shape)
    icon,
    iconPosition = 'left',
-}) => {
+}, ref) => {
    const sizeStyles = {
       sm: { paddingVertical: 6, paddingHorizontal: 12 },
       md: { paddingVertical: 10, paddingHorizontal: 16 },
@@ -40,6 +40,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
 
    return (
       <TouchableOpacity
+         ref={ref}
          onPress={onPress}
          disabled={disabled || loading}
          style={[
@@ -80,7 +81,10 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
          </LinearGradient>
       </TouchableOpacity>
    );
-};
+});
+
+// Add displayName for debugging purposes
+GradientButton.displayName = 'GradientButton';
 
 const styles = StyleSheet.create({
    gradient: {

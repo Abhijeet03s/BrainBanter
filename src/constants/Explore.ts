@@ -23,8 +23,32 @@ export const featuredTopics = [
 ];
 
 export const categories = [
-   { id: 'philosophy', name: 'Philosophy', icon: 'brain' as any, color: '#8A2BE2' },
-   { id: 'technology', name: 'Technology', icon: 'desktopcomputer' as any, color: '#00A3FF' },
-   { id: 'society', name: 'Society', icon: 'person.2.fill' as any, color: '#FF6347' },
-   { id: 'science', name: 'Science', icon: 'atom' as any, color: '#2EFF9A' },
+   {
+      id: 'creative',
+      name: 'Creative',
+      icon: 'lightbulb.fill' as any,
+      color: '#4158D0',
+      gradient: ['#4158D0', '#C850C0']
+   },
+   {
+      id: 'business',
+      name: 'Business',
+      icon: 'chart.bar.fill' as any,
+      color: '#0093E9',
+      gradient: ['#0093E9', '#80D0C7']
+   },
+   {
+      id: 'philosophy',
+      name: 'Philosophy',
+      icon: 'book.fill' as any,
+      color: '#8E2DE2',
+      gradient: ['#8E2DE2', '#4A00E0']
+   },
+   {
+      id: 'casual',
+      name: 'Casual',
+      icon: 'person.2.fill' as any,
+      color: '#00DBDE',
+      gradient: ['#00DBDE', '#FC00FF']
+   },
 ];

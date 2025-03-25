@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
 import { featuredTopics, categories } from '@/constants/Explore';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ExploreScreen() {
    const insets = useSafeAreaInsets();
@@ -82,31 +83,60 @@ export default function ExploreScreen() {
                   ))}
                </View>
 
-               {/* Categories */}
-               <Text className="text-lg font-semibold mb-4" style={{ color: '#FFFFFF' }}>
-                  Browse Categories
+               {/* Debate Modes */}
+               <Text className="text-xl font-semibold mb-4" style={{ color: '#FFFFFF' }}>
+                  Debate Modes
                </Text>
                <View className="flex-row flex-wrap justify-between">
                   {categories.map((category) => (
                      <TouchableOpacity
                         key={category.id}
-                        className="w-[48%] mb-4"
+                        className="w-[48%] mb-5"
                         onPress={() => handleCategoryPress(category.id)}
+                        style={{ shadowColor: category.color, shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 5 } }}
                      >
-                        <BlurView intensity={30} tint="dark" className="rounded-xl overflow-hidden border border-gray-800">
-                           <View className="p-4 items-center">
+                        <View
+                           className="rounded-2xl overflow-hidden border border-gray-800/30"
+                           style={{ backgroundColor: 'rgba(18, 18, 18, 0.85)' }}
+                        >
+                           <View className="p-4 items-center py-6">
                               <View
-                                 className="w-16 h-16 rounded-full items-center justify-center mb-3"
-                                 style={{ backgroundColor: `${category.color}30` }}
+                                 className="w-12 h-12 rounded-lg overflow-hidden mb-4 items-center justify-center"
+                                 style={{ backgroundColor: `${category.color}20` }}
                               >
-                                 <IconSymbol name={category.icon} size={28} color={category.color} />
+                                 <LinearGradient
+                                    colors={category.gradient as [string, string]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                       width: '100%',
+                                       height: '100%',
+                                       position: 'absolute',
+                                    }}
+                                 />
+                                 <IconSymbol
+                                    name={category.icon}
+                                    size={22}
+                                    color="#FFFFFF"
+                                 />
                               </View>
-                              <Text className="font-medium text-base mb-1" style={{ color: '#FFFFFF' }}>{category.name}</Text>
-                              <Text className="text-xs text-center" style={{ color: '#D1D5DB' }}>
-                                 Explore topics in {category.name.toLowerCase()}
+                              <Text
+                                 className="font-semibold text-base mb-2 text-center text-white"
+                                 style={{ fontFamily: 'Poppins' }}
+                              >
+                                 {category.name}
+                              </Text>
+                              <Text
+                                 className="text-xs text-center text-gray-300"
+                                 style={{ lineHeight: 16 }}
+                              >
+                                 {category.id === 'creative' && 'Brainstorming and lateral thinking'}
+                                 {category.id === 'business' && 'Strategic and data-driven discussions'}
+                                 {category.id === 'philosophy' && 'Ethical and conceptual debates'}
+                                 {category.id === 'casual' && 'Light, friendly argumentation'}
                               </Text>
                            </View>
-                        </BlurView>
+                        </View>
                      </TouchableOpacity>
                   ))}
                </View>
