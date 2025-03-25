@@ -91,11 +91,11 @@ export default function DebatesScreen() {
                   </View>
                   <Link href="/debate/new" asChild>
                      <TouchableOpacity
-                        className="w-12 h-12 items-center justify-center rounded-full bg-blue-500 active:bg-blue-600"
+                        className="w-10 h-10 items-center justify-center rounded-full bg-blue-500 active:bg-blue-600"
                      >
                         <IconSymbol
                            name="plus"
-                           size={24}
+                           size={18}
                            color="white"
                         />
                      </TouchableOpacity>

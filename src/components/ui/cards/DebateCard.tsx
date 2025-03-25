@@ -161,18 +161,6 @@ export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDele
                      {formatDate(session.createdAt)}
                   </Text>
                </View>
-
-               <View className="mt-2">
-                  <View className="flex-row items-center justify-center py-3 px-4 bg-gray-800/30 rounded-full">
-                     <Text
-                        className="text-white text-base font-medium mr-2"
-                        style={{ fontFamily: 'Poppins' }}
-                     >
-                        View Details
-                     </Text>
-                     <IconSymbol name="chevron.right" size={16} color="#FFFFFF" />
-                  </View>
-               </View>
             </View>
          </LinearGradient>
       </View>

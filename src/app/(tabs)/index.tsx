@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { View, TouchableOpacity, ScrollView, Animated, Text } from 'react-native';
 import { Link } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import { ThemedText as Text } from '@/components/ui/typography/themed/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAuth } from '@/contexts/AuthContext';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
@@ -53,29 +52,29 @@ export default function HomeScreen() {
     <View className="flex-1" style={{
       paddingTop: insets.top,
     }}>
+      <BlurView intensity={30} tint="dark" className="w-full">
+        <View className="px-6 pt-8 pb-4 border-b border-gray-800/30 bg-gray-900">
+          <Text
+            className="text-gray-400 mb-1"
+            style={{ color: '#A1A1AA', fontSize: 18 }}
+          >
+            Welcome back,
+          </Text>
+          <Text
+            className="text-white text-3xl font-bold py-4"
+            style={{ color: '#FFFFFF', fontFamily: 'Poppins' }}
+          >
+            {userName}
+          </Text>
+        </View>
+      </BlurView>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
         className="bg-gray-900"
       >
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-          {/* Header */}
-          <View className="px-6 pt-8 pb-4">
-            <Text
-              className="text-gray-400 mb-1"
-              style={{ color: '#A1A1AA', fontSize: 18 }}
-            >
-              Welcome back,
-            </Text>
-            <Text
-              className="text-white text-3xl font-bold py-4"
-              type="title"
-              style={{ color: '#FFFFFF' }}
-            >
-              {userName}
-            </Text>
-          </View>
-
           {/* Main Debate CTA */}
           <View className="px-5 py-3">
             <Link href="../debate/new" asChild>
@@ -93,16 +92,18 @@ export default function HomeScreen() {
                         <IconSymbol name="brain" size={32} color="#4A6CF7" />
                       </View>
                     </View>
-                    <Text className="text-white text-2xl font-semibold mb-3" type="subtitle" style={{ color: '#FFFFFF' }}>Start a Debate</Text>
+                    <Text className="text-white text-2xl font-semibold mb-3" style={{ color: '#FFFFFF' }}>Start a Debate</Text>
                     <Text className="text-gray-300 mb-5 leading-5" style={{ color: '#E2E8F0' }}>Challenge your thinking with an AI-powered debate on any topic
                     </Text>
-                    <GradientButton
-                      text="New Debate"
-                      onPress={() => { }}
-                      size="md"
-                      colors={['#4A6CF7', '#2556E8']}
-                      fullWidth
-                    />
+                    <Link href="/debate/new" asChild>
+                      <GradientButton
+                        text="New Debate"
+                        onPress={() => { }}
+                        size="md"
+                        colors={['#4A6CF7', '#2556E8']}
+                        fullWidth
+                      />
+                    </Link>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -112,7 +113,7 @@ export default function HomeScreen() {
           {/* My Debates */}
           <View className="px-5 pt-5 pb-3">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-white text-xl font-semibold" type="subtitle" style={{ color: '#FFFFFF' }}>My Debates</Text>
+              <Text className="text-white text-xl font-semibold" style={{ color: '#FFFFFF' }}>My Debates</Text>
               <Link href="/(tabs)/debates" asChild>
                 <TouchableOpacity>
                   <Text className="text-blue-400" style={{ color: '#4A6CF7' }}>See All</Text>
@@ -139,7 +140,7 @@ export default function HomeScreen() {
           {/* Features */}
           <View className="px-5 pt-8 pb-5">
             <View className="flex-row items-center justify-between mb-6">
-              <Text className="text-white text-2xl font-bold" type="subtitle" style={{ color: '#FFFFFF' }}>Features</Text>
+              <Text className="text-white text-2xl font-bold" style={{ color: '#FFFFFF' }}>Features</Text>
             </View>
             <View className="flex-column" style={{ gap: 5 }}>
               {features.map(feature => (
