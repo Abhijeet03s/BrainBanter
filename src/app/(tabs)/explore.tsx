@@ -47,7 +47,7 @@ export default function ExploreScreen() {
          </BlurView>
 
          <ScrollView showsVerticalScrollIndicator={false} className="bg-gray-900" >
-            <View className="px-6 pt-6 pb-12">
+            <View className="px-6 pt-3 pb-12">
                {/* Featured Topics */}
                <Text className="text-lg font-semibold mb-4" style={{ color: '#FFFFFF' }}>
                   Featured Topics
