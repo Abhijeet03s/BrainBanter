@@ -123,63 +123,69 @@ export default function NewDebateScreen() {
                            className={`mb-3 ${mode === debateMode.id ? 'opacity-100' : 'opacity-70'}`}
                            onPress={() => setMode(debateMode.id)}
                         >
-                           <BlurView
-                              intensity={mode === debateMode.id ? 60 : 40}
-                              tint="dark"
-                              className="p-4 rounded-xl"
+                           <View
                               style={{
                                  borderWidth: 1,
                                  borderColor: mode === debateMode.id ? debateMode.colors[0] : 'rgba(255, 255, 255, 0.1)',
-                                 borderRadius: 12,
-                                 padding: 18,
-                                 backgroundColor: mode === debateMode.id ? `${debateMode.colors[0]}15` : 'rgba(30, 30, 30, 0.5)'
+                                 borderRadius: 16,
+                                 overflow: 'hidden',
                               }}
                            >
-                              <View className="flex-row items-center">
-                                 <View className="mr-4 h-10 w-10 items-center justify-center rounded-xl" style={{
-                                    backgroundColor: mode === debateMode.id ? `${debateMode.colors[0]}15` : 'rgba(255, 255, 255, 0.05)'
-                                 }}>
-                                    <IconSymbol
-                                       name={debateMode.icon as any}
-                                       size={26}
-                                       color={mode === debateMode.id ? debateMode.colors[0] : '#999'}
-                                       style={{
-                                          opacity: mode === debateMode.id ? 1 : 0.7
-                                       }}
-                                    />
-                                 </View>
-                                 <View className="flex-1">
-                                    <Text
-                                       className="font-medium text-base mb-1"
-                                       style={{ color: mode === debateMode.id ? '#FFFFFF' : '#E5E7EB', fontSize: 16, fontFamily: 'Poppins-Medium' }}
-                                    >
-                                       {debateMode.name}
-                                    </Text>
-                                    <Text
-                                       className="text-sm"
-                                       style={{ color: '#D1D5DB', fontSize: 14, fontFamily: 'Poppins-Regular' }}
-                                    >
-                                       {debateMode.description}
-                                    </Text>
-                                 </View>
-                                 {mode === debateMode.id && (
-                                    <View className="h-7 w-7 rounded-full items-center justify-center" style={{
-                                       backgroundColor: debateMode.colors[0],
-                                       shadowColor: debateMode.colors[0],
-                                       shadowOffset: { width: 0, height: 2 },
-                                       shadowOpacity: 0.3,
-                                       shadowRadius: 4,
-                                       elevation: 4
+                              <BlurView
+                                 intensity={mode === debateMode.id ? 60 : 40}
+                                 tint="dark"
+                                 className="p-4 rounded-xl"
+                                 style={{
+                                    padding: 18,
+                                    backgroundColor: mode === debateMode.id ? `${debateMode.colors[0]}15` : 'rgba(30, 30, 30, 0.5)'
+                                 }}
+                              >
+                                 <View className="flex-row items-center">
+                                    <View className="mr-4 h-10 w-10 items-center justify-center rounded-xl" style={{
+                                       backgroundColor: mode === debateMode.id ? `${debateMode.colors[0]}15` : 'rgba(255, 255, 255, 0.05)'
                                     }}>
                                        <IconSymbol
-                                          name="checkmark"
-                                          size={14}
-                                          color="white"
+                                          name={debateMode.icon as any}
+                                          size={26}
+                                          color={mode === debateMode.id ? debateMode.colors[0] : '#999'}
+                                          style={{
+                                             opacity: mode === debateMode.id ? 1 : 0.7
+                                          }}
                                        />
                                     </View>
-                                 )}
-                              </View>
-                           </BlurView>
+                                    <View className="flex-1">
+                                       <Text
+                                          className="font-medium text-base mb-1"
+                                          style={{ color: mode === debateMode.id ? '#FFFFFF' : '#E5E7EB', fontSize: 16, fontFamily: 'Poppins-Medium' }}
+                                       >
+                                          {debateMode.name}
+                                       </Text>
+                                       <Text
+                                          className="text-sm"
+                                          style={{ color: '#D1D5DB', fontSize: 14, fontFamily: 'Poppins-Regular' }}
+                                       >
+                                          {debateMode.description}
+                                       </Text>
+                                    </View>
+                                    {mode === debateMode.id && (
+                                       <View className="h-7 w-7 rounded-full items-center justify-center" style={{
+                                          backgroundColor: debateMode.colors[0],
+                                          shadowColor: debateMode.colors[0],
+                                          shadowOffset: { width: 0, height: 2 },
+                                          shadowOpacity: 0.3,
+                                          shadowRadius: 4,
+                                          elevation: 4
+                                       }}>
+                                          <IconSymbol
+                                             name="checkmark"
+                                             size={14}
+                                             color="white"
+                                          />
+                                       </View>
+                                    )}
+                                 </View>
+                              </BlurView>
+                           </View>
                         </TouchableOpacity>
                      ))}
                   </View>

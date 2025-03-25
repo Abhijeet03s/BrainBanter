@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, Dimensions, ScrollView } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { debateAPI } from '@/services/api';
-import { ThemedText as Text } from '@/components/ui/typography/themed/ThemedText';
 import { Message, DebateSession } from '@/types/debate';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
 
 export default function DebateScreen() {
@@ -120,48 +118,73 @@ export default function DebateScreen() {
          className="flex-1 bg-gray-900"
          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
          keyboardVerticalOffset={insets.bottom}
-         style={{ paddingTop: insets.top }}
       >
+         <Stack.Screen options={{
+            title: session.title,
+            headerShown: false
+         }} />
+
          {/* Header */}
-         <BlurView intensity={30} tint="dark">
-            <View className="p-4 border-b border-gray-800/30">
+         <BlurView intensity={40} tint="dark" className="w-full">
+            <View className="px-4 py-4 border-b border-gray-800/30" style={{ paddingTop: insets.top }}>
                <View className="flex-row items-center">
-                  <TouchableOpacity onPress={handleBack} className="mr-3">
+                  <TouchableOpacity
+                     onPress={handleBack}
+                     className="mr-4 h-10 w-10 items-center justify-center rounded-xl"
+                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                  >
                      <IconSymbol name="chevron.left" size={22} color="#00A3FF" />
                   </TouchableOpacity>
                   <View className="flex-1">
-                     <Text className="font-semibold text-lg" type="subtitle" style={{ color: '#FFFFFF' }}>
+                     <Text
+                        className="font-semibold text-lg mb-1"
+                        style={{
+                           color: '#FFFFFF',
+                           fontFamily: 'Poppins-SemiBold'
+                        }}
+                     >
                         {session.title}
                      </Text>
                      <View className="flex-row items-center">
                         {/* Mode pill */}
-                        <LinearGradient
-                           colors={getModeColor(session.mode)}
-                           start={{ x: 0, y: 0 }}
-                           end={{ x: 1, y: 0 }}
-                           className="rounded-full mr-2 px-2 py-0.5"
+                        <View
+                           className="rounded-full mr-2 px-3 py-1 flex-row items-center"
+                           style={{
+                              backgroundColor: `${getModeColor(session.mode)[0]}15`,
+                              borderWidth: 1,
+                              borderColor: getModeColor(session.mode)[0],
+                           }}
                         >
-                           <Text className="text-xs" style={{ color: '#FFFFFF' }}>
+                           <Text
+                              className="text-xs font-medium"
+                              style={{
+                                 color: getModeColor(session.mode)[0],
+                                 fontFamily: 'Poppins-Medium'
+                              }}
+                           >
                               {session.mode.charAt(0).toUpperCase() + session.mode.slice(1)}
                            </Text>
-                        </LinearGradient>
+                        </View>
 
                         {/* Status indicator */}
                         <View
-                           className="flex-row items-center rounded-full px-2 py-0.5"
+                           className="flex-row items-center rounded-full px-3 py-1"
                            style={{
-                              backgroundColor: getStatusColor(session.status) + '20',
+                              backgroundColor: getStatusColor(session.status) + '15',
                               borderWidth: 1,
                               borderColor: getStatusColor(session.status)
                            }}
                         >
                            <View
-                              className="w-2 h-2 rounded-full mr-1"
+                              className="w-2 h-2 rounded-full mr-2"
                               style={{ backgroundColor: getStatusColor(session.status) }}
                            />
                            <Text
-                              className="text-xs"
-                              style={{ color: getStatusColor(session.status) }}
+                              className="text-xs font-medium"
+                              style={{
+                                 color: getStatusColor(session.status),
+                                 fontFamily: 'Poppins-Medium'
+                              }}
                            >
                               {session.status.toUpperCase()}
                            </Text>
@@ -173,7 +196,7 @@ export default function DebateScreen() {
          </BlurView>
 
          {/* Message List */}
-         <View className="flex-1 p-4">
+         <View className="flex-1 px-4 py-4">
             {error ? (
                <View className="flex-1 justify-center items-center">
                   <Text
@@ -191,7 +214,15 @@ export default function DebateScreen() {
             ) : loading ? (
                <View className="flex-1 justify-center items-center">
                   <ActivityIndicator size="large" color="#00A3FF" />
-                  <Text className="mt-4" style={{ color: '#D1D5DB' }}>Loading debate...</Text>
+                  <Text
+                     className="mt-4"
+                     style={{
+                        color: '#D1D5DB',
+                        fontFamily: 'Lora-Regular'
+                     }}
+                  >
+                     Loading debate...
+                  </Text>
                </View>
             ) : (
                <>
@@ -203,14 +234,28 @@ export default function DebateScreen() {
                      {messages.map((msg, index) => (
                         <View key={index} className={`mb-4 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                            <View
-                              className="max-w-[80%] p-3 rounded-2xl"
                               style={{
-                                 backgroundColor: msg.sender === 'user' ? '#2C2C2E' : '#1C1C1E',
-                                 borderColor: msg.sender === 'user' ? '#00A3FF' : '#4A4A4E',
                                  borderWidth: 1,
+                                 borderColor: msg.sender === 'user' ? '#00A3FF' : 'rgba(255, 255, 255, 0.1)',
+                                 borderRadius: 16,
+                                 overflow: 'hidden',
                               }}
                            >
-                              <Text style={{ color: '#FFFFFF' }}>{msg.content}</Text>
+                              <BlurView
+                                 intensity={msg.sender === 'user' ? 50 : 30}
+                                 tint="dark"
+                                 className="max-w-[80%] p-4 rounded-2xl"
+                              >
+                                 <Text
+                                    style={{
+                                       color: '#FFFFFF',
+                                       fontFamily: msg.sender === 'user' ? 'Lora-Regular' : 'FiraCode-Regular',
+                                       lineHeight: 22,
+                                    }}
+                                 >
+                                    {msg.content}
+                                 </Text>
+                              </BlurView>
                            </View>
                         </View>
                      ))}
@@ -220,47 +265,57 @@ export default function DebateScreen() {
          </View>
 
          {/* Input Area */}
-         <BlurView intensity={70} tint="dark">
-            <View className="p-3 border-t border-gray-800/30">
+         <BlurView intensity={50} tint="dark">
+            <View className="p-4 border-t border-gray-800/30">
                <View className="flex-row items-end">
-                  <View className="flex-1 mr-2">
-                     <LinearGradient
-                        colors={['rgba(40,40,40,0.5)', 'rgba(20,20,20,0.5)']}
-                        className="p-px rounded-2xl"
+                  <View className="flex-1 mr-3">
+                     <BlurView
+                        intensity={40}
+                        tint="dark"
+                        className="rounded-2xl"
+                        style={{
+                           borderWidth: 1,
+                           borderColor: 'rgba(255, 255, 255, 0.1)',
+                           borderRadius: 16
+                        }}
                      >
-                        <BlurView intensity={30} tint="dark" className="rounded-2xl">
-                           <TextInput
-                              className="p-3 min-h-10 rounded-2xl"
-                              placeholder="Type your message..."
-                              placeholderTextColor="#666"
-                              value={newMessage}
-                              onChangeText={setNewMessage}
-                              multiline
-                              maxLength={500}
-                              style={{ maxHeight: 100, color: '#FFFFFF' }}
-                           />
-                        </BlurView>
-                     </LinearGradient>
+                        <TextInput
+                           className="p-4 min-h-10 rounded-2xl"
+                           placeholder="Type your message..."
+                           placeholderTextColor="#9CA3AF"
+                           value={newMessage}
+                           onChangeText={setNewMessage}
+                           multiline
+                           maxLength={500}
+                           style={{
+                              color: '#FFFFFF',
+                              fontFamily: 'Lora-Regular',
+                              maxHeight: 100,
+                              fontSize: 16,
+                              textAlignVertical: 'top'
+                           }}
+                        />
+                     </BlurView>
                   </View>
                   <TouchableOpacity
                      onPress={sendMessage}
                      disabled={sending || !newMessage.trim()}
-                     className="mb-1"
+                     className={`h-12 w-12 items-center justify-center rounded-full ${sending || !newMessage.trim() ? 'opacity-50' : 'opacity-100'}`}
+                     style={{
+                        backgroundColor: sending || !newMessage.trim() ? '#2A2A2A' : '#00A3FF',
+                        borderWidth: 1,
+                        borderColor: sending || !newMessage.trim() ? 'rgba(255, 255, 255, 0.1)' : '#0072FF'
+                     }}
                   >
-                     <LinearGradient
-                        colors={sending || !newMessage.trim() ? ['#404040', '#303030'] : ['#0072FF', '#00A3FF']}
-                        className="w-10 h-10 items-center justify-center rounded-full"
-                     >
-                        {sending ? (
-                           <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                           <IconSymbol name="arrow.up" size={20} color="white" />
-                        )}
-                     </LinearGradient>
+                     {sending ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                     ) : (
+                        <IconSymbol name="arrow.up" size={20} color="white" />
+                     )}
                   </TouchableOpacity>
                </View>
             </View>
          </BlurView>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView >
    );
 } 
