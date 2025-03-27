@@ -21,8 +21,7 @@
    p,
    div,
    .chat-text,
-   .body-text,
-   .mind-map-label {
+   .body-text {
       @apply font-lora;
    }
 

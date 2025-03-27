@@ -60,7 +60,6 @@ For more detailed information about the codebase structure, see [src/README.md](
 ## Features
 
 - AI-powered debate chat interface
-- Mind map visualization of debates
 - User authentication and profiles
 - Saved sessions and notes
 - Customizable AI behavior
