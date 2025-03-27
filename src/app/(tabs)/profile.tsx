@@ -44,18 +44,18 @@ export default function ProfileScreen() {
    };
 
    return (
-      <View className="flex-1 bg-gray-900" style={{ paddingTop: insets.top }}>
+      <View className="flex-1" style={{ paddingTop: insets.top }}>
          <BlurView intensity={30} tint="dark" className="w-full">
-            <View className="px-6 py-8 border-b border-gray-800/30">
+            <View className="px-6 py-8 bg-gray-900 border-b border-gray-800/30">
                <Text className="text-white text-2xl font-bold" style={{ fontFamily: 'Poppins' }}>
                   Profile
                </Text>
             </View>
          </BlurView>
 
-         <View className="px-6 py-8">
+         <View className="px-6 py-8 bg-gray-900 flex-1">
             {/* User Info Card */}
-            <View className="mb-8 rounded-2xl overflow-hidden border border-blue-700/30">
+            <View className="mb-8 rounded-xl overflow-hidden border border-blue-700/30">
                <BlurView intensity={25} tint="dark" className="p-6">
                   <View className="items-center mb-4">
                      <View className="h-24 w-24 rounded-full bg-gray-800/60 items-center justify-center mb-4 border-2 border-blue-500/30">
@@ -80,7 +80,7 @@ export default function ProfileScreen() {
                <Text className="text-white text-lg font-semibold mb-4">
                   Account Settings
                </Text>
-               <View className="rounded-2xl overflow-hidden border border-gray-800/30">
+               <View className="rounded-xl overflow-hidden border border-blue-700/30">
                   <BlurView intensity={25} tint="dark">
                      {/* Logout Button */}
                      <TouchableOpacity
@@ -94,7 +94,7 @@ export default function ProfileScreen() {
                         {isLoggingOut ? (
                            <ActivityIndicator size="small" color="#FF6B6B" />
                         ) : (
-                           <IconSymbol name="chevron.right" size={20} color="#9BA1A6" />
+                           <IconSymbol name="arrow.right.square" size={22} color="#FF6B6B" />
                         )}
                      </TouchableOpacity>
                   </BlurView>

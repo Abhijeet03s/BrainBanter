@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { debateAPI } from '@/services/api';
@@ -8,16 +8,22 @@ import { DebateSession } from '@/types/debate';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { DebateCard } from '@/components/ui/cards/DebateCard';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function DebatesScreen() {
    const insets = useSafeAreaInsets();
    const [sessions, setSessions] = useState<DebateSession[]>([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
+   const router = useRouter();
 
-   useEffect(() => {
-      fetchSessions();
-   }, []);
+   useFocusEffect(
+      useCallback(() => {
+         fetchSessions();
+         return () => {
+         };
+      }, [])
+   );
 
    const fetchSessions = async () => {
       try {
@@ -34,7 +40,6 @@ export default function DebatesScreen() {
    };
 
    const handleDeleteSession = async () => {
-      // Refresh the sessions list after deletion
       fetchSessions();
    };
 
@@ -53,15 +58,13 @@ export default function DebatesScreen() {
          <Text className="text-gray-400 text-center mb-6" style={{ color: '#D1D5DB' }}>
             You don't have any debate sessions yet.
          </Text>
-         <Link href="/debate/new" asChild>
-            <TouchableOpacity>
-               <GradientButton
-                  text="Start a Debate"
-                  size="md"
-                  onPress={() => { }}
-               />
-            </TouchableOpacity>
-         </Link>
+         <TouchableOpacity>
+            <GradientButton
+               text="Start a Debate"
+               size="md"
+               onPress={() => router.push('/debate/new')}
+            />
+         </TouchableOpacity>
       </View>
    );
 

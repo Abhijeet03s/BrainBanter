@@ -229,10 +229,10 @@ export default function NewDebateScreen() {
          </ScrollView>
 
          {loading && (
-            <View className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-               <View className="bg-gray-800/80 p-8 rounded-2xl items-center">
+            <View className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-2xl ">
+               <View className="bg-gray-800/80 p-16 rounded-2xl items-center">
                   <ActivityIndicator size="large" color="#00A3FF" />
-                  <Text style={{ color: '#FFFFFF', fontFamily: 'Poppins-Medium' }} className="mt-4">
+                  <Text style={{ color: '#FFFFFF', fontFamily: 'Poppins-Medium' }} className="mt-4 text-lg">
                      Starting debate...
                   </Text>
                </View>
