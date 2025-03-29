@@ -113,4 +113,39 @@ export const debateAPI = {
          throw error;
       }
    },
+
+   // Save a debate session
+   saveDebate: async (sessionId: string) => {
+      try {
+         return await fetchWithAuth(`/debates/sessions/${sessionId}/save`, {
+            method: 'POST',
+         });
+      } catch (error) {
+         // Just pass through the error with the original message
+         console.error('Error saving debate session:', error);
+         throw error;
+      }
+   },
+
+   // Get saved debates
+   getSavedDebates: async () => {
+      try {
+         return await fetchWithAuth('/debates/saved');
+      } catch (error) {
+         console.error('Error getting saved debates:', error);
+         throw error;
+      }
+   },
+
+   // Remove saved debate
+   removeSavedDebate: async (savedId: string) => {
+      try {
+         return await fetchWithAuth(`/debates/saved/${savedId}`, {
+            method: 'DELETE',
+         });
+      } catch (error) {
+         console.error('Error removing saved debate:', error);
+         throw error;
+      }
+   },
 };

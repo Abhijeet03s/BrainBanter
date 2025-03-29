@@ -19,6 +19,10 @@ export interface DebateSession {
    createdAt: string;
    updatedAt: string;
    messages?: Message[];
+   saved?: {
+      id: string;  // The ID of the saved entry
+      createdAt: string;
+   } | null;
 }
 
 export interface StartDebateSessionRequest {
@@ -49,4 +53,31 @@ export interface GetDebateSessionResponse {
 export interface GetUserDebateSessionsResponse {
    success: boolean;
    sessions: DebateSession[];
+}
+
+export interface SavedDebateResponse {
+   success: boolean;
+   savedDebate: {
+      id: string;
+      userId: string;
+      debateSessionId: string;
+      createdAt: string;
+   };
+}
+
+export interface GetSavedDebatesResponse {
+   success: boolean;
+   savedDebates: {
+      id: string;
+      userId: string;
+      debateSessionId: string;
+      createdAt: string;
+      debateSession: {
+         id: string;
+         title: string;
+         mode: DebateMode;
+         status: 'active' | 'completed' | 'archived';
+         createdAt: string;
+      };
+   }[];
 } 
