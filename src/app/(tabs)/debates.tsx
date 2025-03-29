@@ -13,13 +13,16 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function DebatesScreen() {
    const insets = useSafeAreaInsets();
    const [sessions, setSessions] = useState<DebateSession[]>([]);
+   const [savedDebates, setSavedDebates] = useState<any[]>([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
    const router = useRouter();
+   const [activeFilter, setActiveFilter] = useState<'all' | 'saved'>('all');
 
    useFocusEffect(
       useCallback(() => {
          fetchSessions();
+         fetchSavedDebates();
          return () => {
          };
       }, [])
@@ -39,34 +42,85 @@ export default function DebatesScreen() {
       }
    };
 
+   const fetchSavedDebates = async () => {
+      try {
+         const response = await debateAPI.getSavedDebates();
+         setSavedDebates(response.savedDebates);
+      } catch (error) {
+         console.error('Failed to fetch saved debates:', error);
+      }
+   };
+
    const handleDeleteSession = async () => {
       fetchSessions();
+   };
+
+   const handleSaveSession = async () => {
+      // Refresh both regular and saved debates
+      fetchSessions();
+      fetchSavedDebates();
+   };
+
+   // Convert saved debate format to standard debate session format
+   const mapToDebateSession = (savedDebate: any): DebateSession => {
+      return {
+         ...savedDebate.debateSession,
+         saved: {
+            id: savedDebate.id,
+            createdAt: savedDebate.createdAt
+         }
+      };
    };
 
    const renderSessionItem = ({ item }: { item: DebateSession }) => (
       <DebateCard
          session={item}
          onDelete={handleDeleteSession}
+         onSave={handleSaveSession}
       />
    );
 
-   const renderEmpty = () => (
-      <View className="flex-1 justify-center items-center py-10">
-         <View className="w-20 h-20 rounded-full bg-gray-800 items-center justify-center mb-4">
-            <IconSymbol name="bubble.left.and.bubble.right" size={40} color="#00A3FF" />
+   const toggleFilter = (filter: 'all' | 'saved') => {
+      setActiveFilter(filter);
+   };
+
+   const renderEmpty = () => {
+      const isSavedFilter = activeFilter === 'saved';
+
+      return (
+         <View className="flex-1 justify-center items-center py-10">
+            <View className="w-20 h-20 rounded-full bg-gray-800 items-center justify-center mb-4">
+               <IconSymbol
+                  name={isSavedFilter ? "bookmark" : "bubble.left.and.bubble.right"}
+                  size={40}
+                  color="#00A3FF"
+               />
+            </View>
+            <Text className="text-gray-400 text-center mb-6" style={{ color: '#D1D5DB' }}>
+               {isSavedFilter
+                  ? 'You don\'t have any saved debates yet.'
+                  : 'You don\'t have any debate sessions yet.'}
+            </Text>
+            {isSavedFilter ? (
+               <TouchableOpacity onPress={() => toggleFilter('all')}>
+                  <GradientButton
+                     text="View All Debates"
+                     size="md"
+                     onPress={() => toggleFilter('all')}
+                  />
+               </TouchableOpacity>
+            ) : (
+               <TouchableOpacity>
+                  <GradientButton
+                     text="Start a Debate"
+                     size="md"
+                     onPress={() => router.push('/debate/new')}
+                  />
+               </TouchableOpacity>
+            )}
          </View>
-         <Text className="text-gray-400 text-center mb-6" style={{ color: '#D1D5DB' }}>
-            You don't have any debate sessions yet.
-         </Text>
-         <TouchableOpacity>
-            <GradientButton
-               text="Start a Debate"
-               size="md"
-               onPress={() => router.push('/debate/new')}
-            />
-         </TouchableOpacity>
-      </View>
-   );
+      );
+   };
 
    if (loading) {
       return (
@@ -75,6 +129,11 @@ export default function DebatesScreen() {
          </View>
       );
    }
+
+   // Determine which data to display based on the active filter
+   const displayData = activeFilter === 'all'
+      ? sessions
+      : savedDebates.map(mapToDebateSession);
 
    return (
       <View className="flex-1" style={{ paddingTop: insets.top }}>
@@ -104,6 +163,38 @@ export default function DebatesScreen() {
                      </TouchableOpacity>
                   </Link>
                </View>
+
+               {/* Filter Tabs */}
+               <View className="flex-row rounded-xl overflow-hidden mb-2 border border-gray-700">
+                  <TouchableOpacity
+                     className={`flex-1 py-2 px-4 ${activeFilter === 'all' ? 'bg-blue-500' : 'bg-gray-800'}`}
+                     onPress={() => toggleFilter('all')}
+                  >
+                     <Text
+                        className="text-center font-medium"
+                        style={{
+                           color: activeFilter === 'all' ? '#FFFFFF' : '#A0AEC0',
+                           fontFamily: 'Poppins-Medium'
+                        }}
+                     >
+                        All Debates
+                     </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                     className={`flex-1 py-2 px-4 ${activeFilter === 'saved' ? 'bg-blue-500' : 'bg-gray-800'}`}
+                     onPress={() => toggleFilter('saved')}
+                  >
+                     <Text
+                        className="text-center font-medium"
+                        style={{
+                           color: activeFilter === 'saved' ? '#FFFFFF' : '#A0AEC0',
+                           fontFamily: 'Poppins-Medium'
+                        }}
+                     >
+                        Saved
+                     </Text>
+                  </TouchableOpacity>
+               </View>
             </View>
          </BlurView>
 
@@ -120,13 +211,12 @@ export default function DebatesScreen() {
                </View>
             ) : (
                <FlatList
-                  data={sessions}
+                  data={displayData}
                   renderItem={renderSessionItem}
                   keyExtractor={(item) => item.id}
                   contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
                   showsVerticalScrollIndicator={false}
                   ListEmptyComponent={renderEmpty}
-
                />
             )}
          </View>

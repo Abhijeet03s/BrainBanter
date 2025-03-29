@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
+import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView, Text, Animated } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { debateAPI } from '@/services/api';
 import { Message, DebateSession } from '@/types/debate';
@@ -18,12 +18,52 @@ export default function DebateScreen() {
    const [sending, setSending] = useState(false);
    const [error, setError] = useState<Error | null>(null);
    const scrollViewRef = useRef<ScrollView>(null);
+   const [isSaved, setIsSaved] = useState(false);
+   const [savedId, setSavedId] = useState<string | undefined>();
+   const [isSaving, setIsSaving] = useState(false);
+   const [showSavedFeedback, setShowSavedFeedback] = useState(false);
+
+   // Animation for save button
+   const scaleAnim = useRef(new Animated.Value(1)).current;
 
    useEffect(() => {
       if (id) {
          fetchDebateSession(id);
       }
    }, [id]);
+
+   useEffect(() => {
+      if (session?.saved) {
+         setIsSaved(true);
+         setSavedId(session.saved.id);
+      } else {
+         setIsSaved(false);
+         setSavedId(undefined);
+      }
+   }, [session]);
+
+   useEffect(() => {
+      if (showSavedFeedback) {
+         // Play animation
+         Animated.sequence([
+            Animated.timing(scaleAnim, {
+               toValue: 1.3,
+               duration: 150,
+               useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+               toValue: 1,
+               duration: 150,
+               useNativeDriver: true,
+            }),
+         ]).start(() => {
+            // Reset feedback flag after animation completes
+            setTimeout(() => {
+               setShowSavedFeedback(false);
+            }, 500);
+         });
+      }
+   }, [showSavedFeedback]);
 
    const fetchDebateSession = async (sessionId: string) => {
       try {
@@ -98,6 +138,49 @@ export default function DebateScreen() {
       scrollViewRef.current?.scrollToEnd({ animated: true });
    };
 
+   const handleSaveDebate = async () => {
+      if (!id) return;
+
+      try {
+         setIsSaving(true);
+
+         if (isSaved && savedId) {
+            // Unsave the debate
+            await debateAPI.removeSavedDebate(savedId);
+            setIsSaved(false);
+            setSavedId(undefined);
+         } else {
+            // Save the debate
+            try {
+               const response = await debateAPI.saveDebate(id);
+               setIsSaved(true);
+               setSavedId(response.savedDebate.id);
+            } catch (error) {
+               // If the error is "already saved", just set the UI to saved state
+               if (error instanceof Error && error.message.includes('already saved')) {
+                  // Get saved debates to find the correct savedId
+                  const savedResponse = await debateAPI.getSavedDebates();
+                  const savedDebate = savedResponse.savedDebates.find(
+                     (sd: { id: string; debateSessionId: string }) => sd.debateSessionId === id
+                  );
+
+                  if (savedDebate) {
+                     setIsSaved(true);
+                     setSavedId(savedDebate.id);
+                     setShowSavedFeedback(true);
+                  }
+               } else {
+                  console.error('Error saving debate:', error);
+               }
+            }
+         }
+      } catch (error) {
+         console.error('Error saving/unsaving debate:', error);
+      } finally {
+         setIsSaving(false);
+      }
+   };
+
    if (loading) {
       return (
          <View className="flex-1 justify-center items-center bg-gray-900" style={{ paddingTop: insets.top }}>
@@ -134,10 +217,31 @@ export default function DebateScreen() {
 
    return (
       <View className="flex-1 bg-gray-900" style={{ paddingTop: insets.top }}>
-         <Stack.Screen options={{
-            title: debate.title,
-            headerShown: false
-         }} />
+         <Stack.Screen
+            options={{
+               title: debate.title,
+               headerShown: false,
+               headerRight: () => (
+                  <TouchableOpacity
+                     onPress={handleSaveDebate}
+                     disabled={isSaving}
+                     className="mr-4"
+                  >
+                     {isSaving ? (
+                        <ActivityIndicator size="small" color="#00A3FF" />
+                     ) : (
+                        <Animated.View style={{ transform: [{ scale: isSaved && showSavedFeedback ? scaleAnim : 1 }] }}>
+                           <IconSymbol
+                              name={isSaved ? "bookmark.fill" : "bookmark"}
+                              size={24}
+                              color="#00A3FF"
+                           />
+                        </Animated.View>
+                     )}
+                  </TouchableOpacity>
+               ),
+            }}
+         />
 
          {/* Header */}
          <BlurView intensity={30} tint="dark" className="w-full">

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, Alert, ActivityIndicator } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, TouchableOpacity, Text, Alert, ActivityIndicator, Animated } from 'react-native';
 import { Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { DebateSession } from '@/types/debate';
@@ -10,10 +10,41 @@ interface DebateCardProps {
    session: DebateSession;
    onPress?: () => void;
    onDelete?: () => void;
+   onSave?: () => void;
 }
 
-export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDelete }) => {
+export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDelete, onSave }) => {
    const [isDeleting, setIsDeleting] = useState(false);
+   const [isSaving, setIsSaving] = useState(false);
+   const [isSaved, setIsSaved] = useState(!!session.saved);
+   const [savedId, setSavedId] = useState(session.saved?.id);
+   const [showSavedFeedback, setShowSavedFeedback] = useState(false);
+
+   // Animation values
+   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+   useEffect(() => {
+      if (showSavedFeedback) {
+         // Play animation
+         Animated.sequence([
+            Animated.timing(scaleAnim, {
+               toValue: 1.3,
+               duration: 150,
+               useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+               toValue: 1,
+               duration: 150,
+               useNativeDriver: true,
+            }),
+         ]).start(() => {
+            // Reset feedback flag after animation completes
+            setTimeout(() => {
+               setShowSavedFeedback(false);
+            }, 500);
+         });
+      }
+   }, [showSavedFeedback]);
 
    const formatDate = (dateString: string) => {
       const date = new Date(dateString);
@@ -76,6 +107,58 @@ export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDele
       );
    };
 
+   const handleSaveDebate = async () => {
+      try {
+         setIsSaving(true);
+
+         if (isSaved && savedId) {
+            // Unsave the debate
+            await debateAPI.removeSavedDebate(savedId);
+            setIsSaved(false);
+            setSavedId(undefined);
+         } else {
+            // Save the debate
+            try {
+               const response = await debateAPI.saveDebate(session.id);
+               setIsSaved(true);
+               setSavedId(response.savedDebate.id);
+            } catch (error) {
+               // If the error is "already saved", just set the UI to saved state
+               if (error instanceof Error && error.message.includes('already saved')) {
+                  // Get saved debates to find the correct savedId
+                  const savedResponse = await debateAPI.getSavedDebates();
+                  const savedDebate = savedResponse.savedDebates.find(
+                     (sd: { id: string; debateSessionId: string }) => sd.debateSessionId === session.id
+                  );
+
+                  if (savedDebate) {
+                     setIsSaved(true);
+                     setSavedId(savedDebate.id);
+                     setShowSavedFeedback(true);
+                  }
+               } else {
+                  throw error; // Re-throw for other errors
+               }
+            }
+         }
+
+         // Notify parent component if callback exists
+         if (onSave) onSave();
+      } catch (error) {
+         // Don't show alerts for "already saved" errors
+         if (!(error instanceof Error && error.message.includes('already saved'))) {
+            Alert.alert(
+               "Error",
+               "Failed to save/unsave debate. Please try again.",
+               [{ text: "OK" }]
+            );
+         }
+         console.error('Save/unsave debate error:', error);
+      } finally {
+         setIsSaving(false);
+      }
+   };
+
    const renderCard = () => (
       <View className="rounded-2xl overflow-hidden border border-gray-800/30">
          <LinearGradient
@@ -93,7 +176,7 @@ export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDele
                   backgroundColor: 'rgba(18, 18, 18, 0.85)'
                }}
             >
-               <View className="flex-row justify-between items-center mb-4">
+               <View className="flex-row justify-between items-start mb-2">
                   <Text
                      className="text-white text-xs font-medium"
                      style={{ fontFamily: 'Lora', fontSize: 12, color: getModeColor(session.mode)[0] }}
@@ -101,17 +184,39 @@ export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDele
                      {session.mode.charAt(0).toUpperCase() + session.mode.slice(1)}
                   </Text>
 
-                  <TouchableOpacity
-                     onPress={handleDelete}
-                     disabled={isDeleting}
-                     className="p-2 rounded-full bg-red-500/10"
-                  >
-                     {isDeleting ? (
-                        <ActivityIndicator size="small" color="#EF4444" />
-                     ) : (
-                        <IconSymbol name="trash" size={18} color="#EF4444" />
-                     )}
-                  </TouchableOpacity>
+                  <View className="flex-row">
+                     {/* Save/Bookmark Button */}
+                     <TouchableOpacity
+                        className="p-2 mr-2"
+                        onPress={handleSaveDebate}
+                        disabled={isSaving}
+                     >
+                        {isSaving ? (
+                           <ActivityIndicator size="small" color="#FFF" />
+                        ) : (
+                           <Animated.View style={{ transform: [{ scale: isSaved && showSavedFeedback ? scaleAnim : 1 }] }}>
+                              <IconSymbol
+                                 name={isSaved ? "bookmark.fill" : "bookmark"}
+                                 size={18}
+                                 color={isSaved ? "#00A3FF" : "#FFF"}
+                              />
+                           </Animated.View>
+                        )}
+                     </TouchableOpacity>
+
+                     {/* Delete Button */}
+                     <TouchableOpacity
+                        onPress={handleDelete}
+                        disabled={isDeleting}
+                        className="p-2 rounded-full bg-red-500/10"
+                     >
+                        {isDeleting ? (
+                           <ActivityIndicator size="small" color="#EF4444" />
+                        ) : (
+                           <IconSymbol name="trash" size={18} color="#EF4444" />
+                        )}
+                     </TouchableOpacity>
+                  </View>
                </View>
 
                <Text

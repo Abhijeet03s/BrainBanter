@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
-import { useRouter, useSegments } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { Platform } from 'react-native';
 
@@ -13,7 +13,6 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 export default function TabsLayout() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const segments = useSegments();
   const colorScheme = useColorScheme();
 
   useEffect(() => {
