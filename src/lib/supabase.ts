@@ -23,7 +23,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Backend API URL
-const API_URL = 'http://localhost:8000';
+const API_URL = 'http://localhost:8080';
 
 interface User {
    id: string;
