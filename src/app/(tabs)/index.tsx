@@ -34,6 +34,9 @@ export default function HomeScreen() {
   const getUserName = () => {
     if (!user) return 'User';
 
+    // Check for username field from backend
+    if (user.username) return user.username;
+
     // Get from user_metadata if available
     const metadata = (user as any).user_metadata;
     if (metadata?.full_name) return metadata.full_name;
