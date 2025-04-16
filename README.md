@@ -6,7 +6,7 @@ BrainBanter is an AI-powered debate platform that challenges users with follow-u
 
 The project follows a structured organization pattern:
 
-```
+
 brainbanter/
 ├── src/                           # All application code
 │   ├── app/                       # Expo Router pages
