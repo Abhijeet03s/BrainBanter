@@ -44,10 +44,16 @@ export default function DebatesScreen() {
 
    const fetchSavedDebates = async () => {
       try {
+         setLoading(true);
          const response = await debateAPI.getSavedDebates();
-         setSavedDebates(response.savedDebates);
+         setSavedDebates(response.savedDebates || []);
+         setError(null);
       } catch (error) {
          console.error('Failed to fetch saved debates:', error);
+         setError('Failed to load your saved debates. Please try again.');
+         setSavedDebates([]);
+      } finally {
+         setLoading(false);
       }
    };
 

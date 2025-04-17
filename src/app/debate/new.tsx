@@ -44,6 +44,10 @@ export default function NewDebateScreen() {
          setError(null);
          const response = await debateAPI.startDebateSession(topic, mode);
 
+         if (!response?.session?.id) {
+            throw new Error('Failed to create debate session');
+         }
+
          // Clear the topic input
          setTopic('');
 
