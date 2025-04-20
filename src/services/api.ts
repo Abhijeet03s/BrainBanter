@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:8000/api';
 
 // Helper function to get auth token
 async function getAuthToken() {
