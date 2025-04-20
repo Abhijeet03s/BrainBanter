@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/ui/navigation/HapticTab';

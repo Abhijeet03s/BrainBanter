@@ -195,22 +195,6 @@ export default function NewDebateScreen() {
                                        {debateMode.description}
                                     </Text>
                                  </View>
-                                 {mode === debateMode.id && (
-                                    <View className="h-7 w-7 rounded-full items-center justify-center" style={{
-                                       backgroundColor: debateMode.colors[0],
-                                       shadowColor: debateMode.colors[0],
-                                       shadowOffset: { width: 0, height: 2 },
-                                       shadowOpacity: 0.3,
-                                       shadowRadius: 4,
-                                       elevation: 4
-                                    }}>
-                                       <IconSymbol
-                                          name="checkmark"
-                                          size={14}
-                                          color="white"
-                                       />
-                                    </View>
-                                 )}
                               </View>
                            </BlurView>
                         </View>
