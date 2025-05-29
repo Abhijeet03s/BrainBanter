@@ -94,7 +94,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
             <View className="flex-1 px-8 justify-center">
                {/* Logo/App Icon  */}
                <View className="items-center mb-8">
-                  <View className="w-20 h-20 rounded-2xl overflow-hidden mb-6 shadow-lg"
+                  <View className="w-28 h-28 rounded-3xl overflow-hidden mb-6 shadow-lg"
                      style={{
                         shadowColor: '#00A3FF',
                         shadowOffset: { width: 0, height: 0 },
@@ -103,7 +103,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                         elevation: 10
                      }}>
                      <Image
-                        source={require('@/assets/images/bb-logo.png')}
+                        source={require('@/assets/images/brainbanter-logo.png')}
                         className="w-full h-full"
                         resizeMode="cover"
                      />
