@@ -58,3 +58,4 @@ logs/
 *.log
 
 app-example
+.vercel
