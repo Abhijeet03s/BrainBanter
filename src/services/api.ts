@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabase';
 
-const API_URL = 'http://localhost:8000/api';
+// Use environment-based API URL with production fallback
+const API_URL = process.env.NODE_ENV === 'production'
+   ? 'https://brainbanter-backend.onrender.com/api'
+   : process.env.EXPO_PUBLIC_API_URL || 'https://brainbanter-backend.onrender.com/api';
 
 // Helper function to get auth token
 async function getAuthToken() {
