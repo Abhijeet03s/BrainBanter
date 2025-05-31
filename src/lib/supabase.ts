@@ -1,29 +1,59 @@
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Create a custom storage adapter for AsyncStorage
-const AsyncStorageAdapter = {
-   getItem: (key: string) => AsyncStorage.getItem(key),
-   setItem: (key: string, value: string) => AsyncStorage.setItem(key, value),
-   removeItem: (key: string) => AsyncStorage.removeItem(key),
+// Create a platform-specific storage adapter
+const createStorageAdapter = () => {
+   if (Platform.OS === 'web') {
+      // Web storage adapter using localStorage
+      return {
+         getItem: (key: string) => {
+            if (typeof window !== 'undefined') {
+               return Promise.resolve(localStorage.getItem(key));
+            }
+            return Promise.resolve(null);
+         },
+         setItem: (key: string, value: string) => {
+            if (typeof window !== 'undefined') {
+               localStorage.setItem(key, value);
+            }
+            return Promise.resolve();
+         },
+         removeItem: (key: string) => {
+            if (typeof window !== 'undefined') {
+               localStorage.removeItem(key);
+            }
+            return Promise.resolve();
+         },
+      };
+   } else {
+      // Native storage adapter using AsyncStorage
+      return {
+         getItem: (key: string) => AsyncStorage.getItem(key),
+         setItem: (key: string, value: string) => AsyncStorage.setItem(key, value),
+         removeItem: (key: string) => AsyncStorage.removeItem(key),
+      };
+   }
 };
 
 // Initialize the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
    auth: {
-      storage: AsyncStorageAdapter,
+      storage: createStorageAdapter(),
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false,
+      detectSessionInUrl: Platform.OS === 'web',
    },
 });
 
-// Backend API URL
-const API_URL = 'http://localhost:8000';
+// Backend API URL - use production URL from app config
+const API_URL = process.env.NODE_ENV === 'production'
+   ? 'https://brainbanter-backend.onrender.com'
+   : 'http://localhost:8000';
 
 interface User {
    id: string;
