@@ -21,30 +21,46 @@ export default function DebatesScreen() {
 
    useFocusEffect(
       useCallback(() => {
-         fetchSessions();
-         fetchSavedDebates();
+         fetchData();
          return () => {
          };
       }, [])
    );
 
-   const fetchSessions = async () => {
+   const fetchData = async () => {
       try {
          setLoading(true);
+         setError(null);
+
+         // Make both API calls in parallel
+         const [sessionsResponse, savedDebatesResponse] = await Promise.all([
+            debateAPI.getUserSessions(),
+            debateAPI.getSavedDebates()
+         ]);
+
+         setSessions(sessionsResponse.sessions);
+         setSavedDebates(savedDebatesResponse.savedDebates || []);
+      } catch (error) {
+         console.error('Failed to fetch debate data:', error);
+         setError('Failed to load your debates. Please try again.');
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   const fetchSessions = async () => {
+      try {
          const response = await debateAPI.getUserSessions();
          setSessions(response.sessions);
          setError(null);
       } catch (error) {
          console.error('Failed to fetch debate sessions:', error);
          setError('Failed to load your debate sessions. Please try again.');
-      } finally {
-         setLoading(false);
       }
    };
 
    const fetchSavedDebates = async () => {
       try {
-         setLoading(true);
          const response = await debateAPI.getSavedDebates();
          setSavedDebates(response.savedDebates || []);
          setError(null);
@@ -52,8 +68,6 @@ export default function DebatesScreen() {
          console.error('Failed to fetch saved debates:', error);
          setError('Failed to load your saved debates. Please try again.');
          setSavedDebates([]);
-      } finally {
-         setLoading(false);
       }
    };
 
@@ -61,10 +75,50 @@ export default function DebatesScreen() {
       fetchSessions();
    };
 
-   const handleSaveSession = async () => {
-      // Refresh both regular and saved debates
-      fetchSessions();
-      fetchSavedDebates();
+   const handleSaveSession = async (sessionId?: string, isBookmarking?: boolean) => {
+      // Optimistic update for better UX
+      if (sessionId && typeof isBookmarking === 'boolean') {
+         if (isBookmarking) {
+            // Optimistically add to saved debates
+            const sessionToSave = sessions.find(s => s.id === sessionId);
+            if (sessionToSave) {
+               const optimisticSaved = {
+                  id: `temp-${Date.now()}`,
+                  debateSessionId: sessionId,
+                  createdAt: new Date().toISOString(),
+                  debateSession: sessionToSave
+               };
+               setSavedDebates(prev => [optimisticSaved, ...prev]);
+            }
+         } else {
+            // Optimistically remove from saved debates
+            setSavedDebates(prev => prev.filter(saved =>
+               saved.debateSessionId !== sessionId && saved.debateSession?.id !== sessionId
+            ));
+         }
+      }
+
+      // Small delay to let user see the optimistic update
+      setTimeout(async () => {
+         // Refresh both regular and saved debates in parallel (in background)
+         try {
+            await Promise.all([
+               fetchSessions(),
+               fetchSavedDebates()
+            ]);
+         } catch (error) {
+            console.error('Failed to refresh debate data:', error);
+            // Revert optimistic update on error
+            if (sessionId && typeof isBookmarking === 'boolean') {
+               if (isBookmarking) {
+                  setSavedDebates(prev => prev.filter(saved => !saved.id.startsWith('temp-')));
+               } else {
+                  // Re-fetch to restore correct state
+                  fetchSavedDebates();
+               }
+            }
+         }
+      }, 300);
    };
 
    // Convert saved debate format to standard debate session format
@@ -211,7 +265,7 @@ export default function DebatesScreen() {
                      <Text className="text-red-400 text-center mb-4" style={{ color: '#F87171' }}>{error}</Text>
                      <GradientButton
                         text="Try Again"
-                        onPress={fetchSessions}
+                        onPress={fetchData}
                      />
                   </View>
                </View>

@@ -10,7 +10,7 @@ interface DebateCardProps {
    session: DebateSession;
    onPress?: () => void;
    onDelete?: () => void;
-   onSave?: () => void;
+   onSave?: (sessionId?: string, isBookmarking?: boolean) => void;
 }
 
 export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDelete, onSave }) => {
@@ -110,50 +110,40 @@ export const DebateCard: React.FC<DebateCardProps> = ({ session, onPress, onDele
    const handleSaveDebate = async () => {
       try {
          setIsSaving(true);
+         let isBookmarking = false;
 
          if (isSaved && savedId) {
             // Unsave the debate
             await debateAPI.removeSavedDebate(savedId);
             setIsSaved(false);
             setSavedId(undefined);
+            isBookmarking = false;
          } else {
             // Save the debate
-            try {
-               const response = await debateAPI.saveDebate(session.id);
-               setIsSaved(true);
-               setSavedId(response.savedDebate.id);
-            } catch (error) {
-               // If the error is "already saved", just set the UI to saved state
-               if (error instanceof Error && error.message.includes('already saved')) {
-                  // Get saved debates to find the correct savedId
-                  const savedResponse = await debateAPI.getSavedDebates();
-                  const savedDebate = savedResponse.savedDebates.find(
-                     (sd: { id: string; debateSessionId: string }) => sd.debateSessionId === session.id
-                  );
-
-                  if (savedDebate) {
-                     setIsSaved(true);
-                     setSavedId(savedDebate.id);
-                     setShowSavedFeedback(true);
-                  }
-               } else {
-                  throw error; // Re-throw for other errors
-               }
-            }
+            const response = await debateAPI.saveDebate(session.id);
+            setIsSaved(true);
+            setSavedId(response.savedDebate.id);
+            setShowSavedFeedback(true);
+            isBookmarking = true;
          }
 
          // Notify parent component if callback exists
-         if (onSave) onSave();
+         if (onSave) onSave(session.id, isBookmarking);
       } catch (error) {
-         // Don't show alerts for "already saved" errors
-         if (!(error instanceof Error && error.message.includes('already saved'))) {
+         // Handle "already saved" error gracefully without additional API calls
+         if (error instanceof Error && error.message.includes('already saved')) {
+            setIsSaved(true);
+            setShowSavedFeedback(true);
+            // Still notify parent to refresh data
+            if (onSave) onSave(session.id, true);
+         } else {
             Alert.alert(
                "Error",
                "Failed to save/unsave debate. Please try again.",
                [{ text: "OK" }]
             );
+            console.error('Save/unsave debate error:', error);
          }
-         console.error('Save/unsave debate error:', error);
       } finally {
          setIsSaving(false);
       }

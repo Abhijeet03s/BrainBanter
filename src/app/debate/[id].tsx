@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView, Text, Animated } from 'react-native';
+import { View, TouchableOpacity, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView, Text, Animated, Dimensions } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { debateAPI } from '@/services/api';
 import { Message, DebateSession } from '@/types/debate';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { BlurView } from 'expo-blur';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
+import { MessageBubble } from '@/components/ui/chat/MessageBubble';
+import { TypingIndicator } from '@/components/ui/chat/TypingIndicator';
 
 export default function DebateScreen() {
    const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,9 +25,12 @@ export default function DebateScreen() {
    const [savedId, setSavedId] = useState<string | undefined>();
    const [isSaving, setIsSaving] = useState(false);
    const [showSavedFeedback, setShowSavedFeedback] = useState(false);
+   const [isTyping, setIsTyping] = useState(false);
 
-   // Animation for save button
+   // Animation values
    const scaleAnim = useRef(new Animated.Value(1)).current;
+   const fadeAnim = useRef(new Animated.Value(0)).current;
+   const slideAnim = useRef(new Animated.Value(50)).current;
 
    useEffect(() => {
       if (id) {
@@ -65,6 +71,24 @@ export default function DebateScreen() {
       }
    }, [showSavedFeedback]);
 
+   // Animate messages on load
+   useEffect(() => {
+      if (messages.length > 0) {
+         Animated.parallel([
+            Animated.timing(fadeAnim, {
+               toValue: 1,
+               duration: 600,
+               useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+               toValue: 0,
+               duration: 600,
+               useNativeDriver: true,
+            }),
+         ]).start();
+      }
+   }, [messages]);
+
    const fetchDebateSession = async (sessionId: string) => {
       try {
          setLoading(true);
@@ -85,11 +109,26 @@ export default function DebateScreen() {
 
       try {
          setSending(true);
+         setIsTyping(true);
+
+         // Add user message immediately for better UX
+         const userMessage: Message = {
+            id: `temp-${Date.now()}`,
+            debateSessionId: id,
+            content: newMessage,
+            sender: 'user',
+            createdAt: new Date().toISOString()
+         };
+         setMessages(prevMessages => [...prevMessages, userMessage]);
+         setNewMessage('');
+
          const response = await debateAPI.sendMessage(id, newMessage);
 
-         // Append the new messages to the existing messages
-         setMessages(prevMessages => [...prevMessages, ...response.messages]);
-         setNewMessage('');
+         // Remove the temporary user message and add the actual response
+         setMessages(prevMessages => {
+            const withoutTemp = prevMessages.slice(0, -1);
+            return [...withoutTemp, ...response.messages];
+         });
 
          // Scroll to the bottom
          setTimeout(() => {
@@ -98,17 +137,12 @@ export default function DebateScreen() {
       } catch (error) {
          console.error('Failed to send message:', error);
          setError(error instanceof Error ? error : new Error('Failed to send your message'));
+         setMessages(prevMessages => prevMessages.slice(0, -1));
+         setNewMessage(newMessage);
       } finally {
          setSending(false);
+         setIsTyping(false);
       }
-   };
-
-   const formatDate = (dateString: string) => {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString('en-US', {
-         hour: '2-digit',
-         minute: '2-digit',
-      });
    };
 
    const getModeColor = (mode: string): [string, string] => {
@@ -184,16 +218,32 @@ export default function DebateScreen() {
    if (loading) {
       return (
          <View className="flex-1 justify-center items-center bg-gray-900" style={{ paddingTop: insets.top }}>
-            <ActivityIndicator size="large" color="#00A3FF" />
-            <Text
-               className="mt-4"
-               style={{
-                  color: '#D1D5DB',
-                  fontFamily: 'Lora-Regular'
-               }}
-            >
-               Loading debate...
-            </Text>
+            <View className="items-center">
+               <View
+                  className="w-20 h-20 rounded-full items-center justify-center mb-6"
+                  style={{ backgroundColor: '#00A3FF20' }}
+               >
+                  <ActivityIndicator size="large" color="#00A3FF" />
+               </View>
+               <Text
+                  className="text-xl font-semibold mb-2"
+                  style={{
+                     color: '#FFFFFF',
+                     fontFamily: 'Poppins-SemiBold'
+                  }}
+               >
+                  Loading Debate
+               </Text>
+               <Text
+                  style={{
+                     color: '#9CA3AF',
+                     fontFamily: 'Lora-Regular',
+                     textAlign: 'center',
+                  }}
+               >
+                  Preparing your intellectual conversation...
+               </Text>
+            </View>
          </View>
       );
    }
@@ -201,14 +251,34 @@ export default function DebateScreen() {
    if (error || (!session && !loading)) {
       return (
          <View className="flex-1 justify-center items-center bg-gray-900" style={{ paddingTop: insets.top }}>
-            <View className="p-6 rounded-xl bg-red-900/20 border border-red-800 m-4">
-               <Text className="text-center mb-4" style={{ color: '#F87171' }}>{error?.message || 'Session not found'}</Text>
-               <GradientButton
-                  text="Go Back"
-                  onPress={handleBack}
-                  size="md"
-               />
-            </View>
+            <BlurView intensity={40} tint="dark" className="rounded-2xl overflow-hidden border border-red-500/30 m-6">
+               <View className="p-8 items-center">
+                  <View
+                     className="w-16 h-16 rounded-full items-center justify-center mb-4"
+                     style={{ backgroundColor: '#EF444420' }}
+                  >
+                     <IconSymbol name="exclamationmark.triangle" size={32} color="#EF4444" />
+                  </View>
+                  <Text
+                     className="text-xl font-semibold mb-2 text-center"
+                     style={{ color: '#EF4444', fontFamily: 'Poppins-SemiBold' }}
+                  >
+                     Oops! Something went wrong
+                  </Text>
+                  <Text
+                     className="text-center mb-6"
+                     style={{ color: '#9CA3AF', fontFamily: 'Lora-Regular' }}
+                  >
+                     {error?.message || 'Session not found'}
+                  </Text>
+                  <GradientButton
+                     text="Go Back"
+                     onPress={handleBack}
+                     size="md"
+                     colors={['#EF4444', '#DC2626']}
+                  />
+               </View>
+            </BlurView>
          </View>
       );
    }
@@ -216,238 +286,202 @@ export default function DebateScreen() {
    const debate = session as DebateSession;
 
    return (
-      <View className="flex-1 bg-gray-900" style={{ paddingTop: insets.top }}>
-         <Stack.Screen
-            options={{
-               title: debate.title,
-               headerShown: false,
-               headerRight: () => (
-                  <TouchableOpacity
-                     onPress={handleSaveDebate}
-                     disabled={isSaving}
-                     className="mr-4"
-                  >
-                     {isSaving ? (
-                        <ActivityIndicator size="small" color="#00A3FF" />
-                     ) : (
-                        <Animated.View style={{ transform: [{ scale: isSaved && showSavedFeedback ? scaleAnim : 1 }] }}>
-                           <IconSymbol
-                              name={isSaved ? "bookmark.fill" : "bookmark"}
-                              size={24}
-                              color="#00A3FF"
-                           />
-                        </Animated.View>
-                     )}
-                  </TouchableOpacity>
-               ),
-            }}
-         />
+      <>
+         <StatusBar style="dark" />
+         <View className="flex-1 bg-white">
+            {/* Light status bar area */}
+            <View className="bg-white" style={{ height: insets.top }} />
 
-         {/* Header */}
-         <BlurView intensity={30} tint="dark" className="w-full">
-            <View className="px-6 pt-8 pb-4 border-b border-gray-800/30 bg-gray-900">
-               <View className="mb-4">
-                  <TouchableOpacity
-                     onPress={handleBack}
-                     className="h-10 w-10 items-center justify-center rounded-xl"
-                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
-                  >
-                     <IconSymbol name="chevron.left" size={22} color="#00A3FF" />
-                  </TouchableOpacity>
-               </View>
+            <Stack.Screen
+               options={{
+                  title: debate?.title || 'Debate',
+                  headerShown: false,
+               }}
+            />
 
-               <View>
-                  <Text
-                     className="text-white text-2xl font-semibold mb-2"
-                     style={{
-                        color: '#FFFFFF',
-                        fontFamily: 'Poppins'
-                     }}
-                  >
-                     {debate.title}
-                  </Text>
-                  <View className="flex-row items-center">
-                     {/* Mode pill */}
-                     <View
-                        className="rounded-full mr-2 px-3 py-1 flex-row items-center"
-                        style={{
-                           backgroundColor: `${getModeColor(debate.mode)[0]}15`,
-                           borderWidth: 1,
-                           borderColor: getModeColor(debate.mode)[0],
-                        }}
+            {/* Fixed Header with consistent dark background */}
+            <View className="bg-gray-900 border-b border-gray-800/50">
+               <View className="px-6 pt-4 pb-4">
+                  <View className="flex-row items-center justify-between mb-4">
+                     <TouchableOpacity
+                        onPress={handleBack}
+                        className="h-10 w-10 items-center justify-center rounded-xl"
+                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
                      >
-                        <Text
-                           className="text-xs font-medium"
-                           style={{
-                              color: getModeColor(debate.mode)[0],
-                              fontFamily: 'Poppins-Medium'
-                           }}
-                        >
-                           {debate.mode.charAt(0).toUpperCase() + debate.mode.slice(1)}
-                        </Text>
-                     </View>
+                        <IconSymbol name="chevron.left" size={20} color="#00A3FF" />
+                     </TouchableOpacity>
 
-                     {/* Status indicator */}
-                     <View
-                        className="flex-row items-center rounded-full px-3 py-1"
-                        style={{
-                           backgroundColor: getStatusColor(debate.status) + '15',
-                           borderWidth: 1,
-                           borderColor: getStatusColor(debate.status)
-                        }}
+                     <TouchableOpacity
+                        onPress={handleSaveDebate}
+                        disabled={isSaving}
+                        className="h-10 w-10 items-center justify-center rounded-xl"
+                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
                      >
-                        <View
-                           className="w-2 h-2 rounded-full mr-2"
-                           style={{ backgroundColor: getStatusColor(debate.status) }}
-                        />
-                        <Text
-                           className="text-xs font-medium"
-                           style={{
-                              color: getStatusColor(debate.status),
-                              fontFamily: 'Poppins-Medium'
-                           }}
-                        >
-                           {debate.status.toUpperCase()}
-                        </Text>
-                     </View>
+                        {isSaving ? (
+                           <ActivityIndicator size="small" color="#00A3FF" />
+                        ) : (
+                           <Animated.View style={{ transform: [{ scale: isSaved && showSavedFeedback ? scaleAnim : 1 }] }}>
+                              <IconSymbol
+                                 name={isSaved ? "bookmark.fill" : "bookmark"}
+                                 size={20}
+                                 color={isSaved ? "#00A3FF" : "#9CA3AF"}
+                              />
+                           </Animated.View>
+                        )}
+                     </TouchableOpacity>
                   </View>
-               </View>
-            </View>
-         </BlurView>
 
-         {/* Message List */}
-         <KeyboardAvoidingView
-            className="flex-1 bg-gray-900"
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={insets.bottom}
-         >
-            <View className="flex-1 px-6 py-4 bg-gray-900">
-               {error ? (
-                  <View className="flex-1 justify-center items-center">
+                  <View>
                      <Text
-                        className="text-center mb-4"
-                        style={{ color: '#F87171' }}
-                     >
-                        Error loading debate
-                     </Text>
-                     <GradientButton
-                        text="Go Back"
-                        onPress={() => router.back()}
-                        size="md"
-                     />
-                  </View>
-               ) : loading ? (
-                  <View className="flex-1 justify-center items-center">
-                     <ActivityIndicator size="large" color="#00A3FF" />
-                     <Text
-                        className="mt-4"
+                        className="text-white text-xl font-bold mb-2"
                         style={{
-                           color: '#D1D5DB',
-                           fontFamily: 'Lora-Regular'
+                           color: '#FFFFFF',
+                           fontFamily: 'Poppins-Bold',
+                           fontSize: 20,
+                           lineHeight: 28,
                         }}
+                        numberOfLines={2}
                      >
-                        Loading debate...
+                        {debate.title}
                      </Text>
-                  </View>
-               ) : (
-                  <>
-                     <ScrollView
-                        className="flex-1"
-                        ref={scrollViewRef}
-                        onContentSizeChange={() => scrollToBottom()}
-                        showsVerticalScrollIndicator={false}
-                     >
-                        {messages.map((msg, index) => (
-                           <View key={index} className={`mb-4 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                              <View
-                                 style={{
-                                    borderWidth: 1,
-                                    borderColor: msg.sender === 'user' ? '#00A3FF' : 'rgba(255, 255, 255, 0.1)',
-                                    borderRadius: 16,
-                                    overflow: 'hidden',
-                                 }}
-                              >
-                                 <BlurView
-                                    intensity={msg.sender === 'user' ? 50 : 30}
-                                    tint="dark"
-                                    className="max-w-[80%] p-4 rounded-2xl"
-                                 >
-                                    <Text
-                                       style={{
-                                          color: '#FFFFFF',
-                                          fontFamily: msg.sender === 'user' ? 'Lora-Regular' : 'FiraCode-Regular',
-                                          lineHeight: 22,
-                                       }}
-                                    >
-                                       {msg.content}
-                                    </Text>
-                                 </BlurView>
-                              </View>
-                           </View>
-                        ))}
-                        <View className="h-4" />
-                     </ScrollView>
-                  </>
-               )}
-            </View>
-
-            {/* Input Area */}
-            <BlurView intensity={50} tint="dark">
-               <View className="p-4 pb-6 border-t border-gray-800/30 bg-gray-900/80" style={{ paddingBottom: insets.bottom > 0 ? insets.bottom : 16 }}>
-                  <View className="flex-row items-center">
-                     <View className="flex-1 mr-3">
-                        <View
+                     <View className="flex-row items-center">
+                        {/* Mode pill */}
+                        <Text
+                           className="rounded-full mr-3 px-3 py-1"
                            style={{
+                              backgroundColor: getModeColor(debate.mode)[0],
                               borderWidth: 1,
-                              borderColor: '#00A3FF',
-                              borderRadius: 24,
-                              overflow: 'hidden',
+                              borderColor: getModeColor(debate.mode)[1]
                            }}
                         >
-                           <BlurView
-                              intensity={40}
-                              tint="dark"
-                              className="rounded-3xl"
+                           <Text
+                              className="text-xs font-bold"
+                              style={{
+                                 color: '#FFFFFF',
+                                 fontFamily: 'Poppins-Bold'
+                              }}
+                           >
+                              {debate.mode.charAt(0).toUpperCase() + debate.mode.slice(1)}
+                           </Text>
+                        </Text>
+
+                        {/* Status indicator */}
+                        <View
+                           className="flex-row items-center rounded-full px-3 py-1"
+                           style={{
+                              backgroundColor: getStatusColor(debate.status) + '20',
+                              borderWidth: 1,
+                              borderColor: getStatusColor(debate.status)
+                           }}
+                        >
+                           <View
+                              className="w-2 h-2 rounded-full mr-2"
+                              style={{ backgroundColor: getStatusColor(debate.status) }}
+                           />
+                           <Text
+                              className="text-xs font-bold"
+                              style={{
+                                 color: getStatusColor(debate.status),
+                                 fontFamily: 'Poppins-Bold'
+                              }}
+                           >
+                              {debate.status.toUpperCase()}
+                           </Text>
+                        </View>
+                     </View>
+                  </View>
+               </View>
+            </View>
+
+            {/* Message List */}
+            <KeyboardAvoidingView
+               className="flex-1"
+               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+               keyboardVerticalOffset={insets.bottom}
+            >
+               <View className="flex-1 bg-gray-900">
+                  <ScrollView
+                     className="flex-1 px-4 py-4"
+                     ref={scrollViewRef}
+                     onContentSizeChange={() => scrollToBottom()}
+                     showsVerticalScrollIndicator={false}
+                     contentContainerStyle={{ paddingBottom: 20 }}
+                  >
+                     {messages.map((msg, index) => (
+                        <MessageBubble
+                           key={msg.id || index}
+                           message={msg}
+                           index={index}
+                        />
+                     ))}
+                     <TypingIndicator isVisible={isTyping} />
+                  </ScrollView>
+               </View>
+
+               {/* Input Area */}
+               <View className="bg-gray-900 border-t border-gray-800/50">
+                  <View
+                     className="px-4 py-4"
+                     style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+                  >
+                     <View className="flex-row items-end gap-3">
+                        <View className="flex-1">
+                           <View
+                              style={{
+                                 borderRadius: 24,
+                                 borderWidth: 1,
+                                 borderColor: newMessage.trim() ? '#00A3FF' : 'rgba(255, 255, 255, 0.2)',
+                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                 overflow: 'hidden',
+                              }}
                            >
                               <TextInput
-                                 className="px-4 py-3 min-h-12 rounded-3xl"
-                                 placeholder="Type your message..."
-                                 placeholderTextColor="#9CA3AF"
+                                 className="px-4 py-3 min-h-12"
+                                 placeholder="Share your thoughts..."
+                                 placeholderTextColor="#6B7280"
                                  value={newMessage}
                                  onChangeText={setNewMessage}
                                  multiline
-                                 maxLength={500}
+                                 maxLength={1000}
                                  style={{
                                     color: '#FFFFFF',
                                     fontFamily: 'Lora-Regular',
                                     maxHeight: 100,
                                     fontSize: 16,
-                                    textAlignVertical: 'center'
+                                    lineHeight: 20,
+                                    textAlignVertical: 'top'
                                  }}
                               />
-                           </BlurView>
+                           </View>
                         </View>
+
+                        <TouchableOpacity
+                           onPress={sendMessage}
+                           disabled={sending || !newMessage.trim()}
+                           style={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: 24,
+                              backgroundColor: newMessage.trim() ? '#00A3FF' : 'rgba(255, 255, 255, 0.1)',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                           }}
+                        >
+                           {sending ? (
+                              <ActivityIndicator size="small" color="#fff" />
+                           ) : (
+                              <IconSymbol
+                                 name="arrow.up"
+                                 size={20}
+                                 color={newMessage.trim() ? "white" : "#6B7280"}
+                              />
+                           )}
+                        </TouchableOpacity>
                      </View>
-                     <TouchableOpacity
-                        onPress={sendMessage}
-                        disabled={sending || !newMessage.trim()}
-                        className={`h-12 w-12 items-center justify-center rounded-full ${sending || !newMessage.trim() ? 'opacity-50' : 'opacity-100'}`}
-                        style={{
-                           backgroundColor: sending || !newMessage.trim() ? '#2A2A2A' : '#00A3FF',
-                           borderWidth: 1,
-                           borderColor: sending || !newMessage.trim() ? 'rgba(255, 255, 255, 0.1)' : '#0072FF'
-                        }}
-                     >
-                        {sending ? (
-                           <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                           <IconSymbol name="arrow.up" size={20} color="white" />
-                        )}
-                     </TouchableOpacity>
                   </View>
                </View>
-            </BlurView>
-         </KeyboardAvoidingView>
-      </View>
+            </KeyboardAvoidingView>
+         </View>
+      </>
    );
 } 
