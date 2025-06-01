@@ -1,65 +1,68 @@
 # BrainBanter
 
-BrainBanter is an AI-powered debate platform that challenges users with follow-up questions, provides alternative perspectives, and visually maps out conversations.
+AI-powered debate platform that challenges users with follow-up questions, provides alternative perspectives, and creates engaging conversations.
+
+## Tech Stack
+
+- **Framework**: React Native + Expo (TypeScript)
+- **Navigation**: Expo Router
+- **Styling**: NativeWind (Tailwind CSS)
+- **Authentication**: Supabase
+- **State**: React Context + useReducer
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Platform-specific builds
+npm run ios     # iOS simulator
+npm run android # Android emulator
+npm run web     # Web browser
+```
 
 ## Project Structure
 
-The project follows a structured organization pattern:
-
-
-brainbanter/
-├── src/                           # All application code
-│   ├── app/                       # Expo Router pages
-│   ├── assets/                    # Static assets (images, fonts)
-│   ├── components/                # Reusable components
-│   ├── contexts/                  # React contexts
-│   ├── hooks/                     # Custom hooks
-│   ├── lib/                       # Third-party library configurations
-│   ├── services/                  # API and external services
-│   ├── state/                     # State management (Zustand)
-│   ├── types/                     # TypeScript type definitions
-│   ├── utils/                     # Helper functions
-│   └── constants/                 # App constants
-├── .expo/                         # Expo configuration
-├── node_modules/                  # Dependencies
-├── scripts/                       # Build and utility scripts
-├── .env                           # Environment variables
-├── app.json                       # Expo app configuration
-├── babel.config.js                # Babel configuration
-├── global.css                     # Global styles
-├── metro.config.js                # Metro bundler config
-├── package.json                   # Dependencies and scripts
-├── tailwind.config.js             # Tailwind CSS configuration
-├── tsconfig.json                  # TypeScript configuration
-└── README.md                      # Project documentation
 ```
-
-For more detailed information about the codebase structure, see [src/README.md](src/README.md).
-
-## Getting Started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npm start
-   ```
-
-## Development
-
-- **Styling**: The project uses NativeWind (Tailwind CSS for React Native)
-- **State Management**: Zustand for lightweight state management
-- **Navigation**: React Navigation with Expo Router
-- **Authentication**: Supabase auth
+src/
+├── app/           # Expo Router pages & navigation
+├── components/    # Reusable UI components
+├── contexts/      # React Context providers
+├── hooks/         # Custom React hooks
+├── services/      # API clients & external services
+├── types/         # TypeScript type definitions
+├── constants/     # App constants
+├── lib/           # Utility functions & configs
+└── assets/        # Static assets
+```
 
 ## Features
 
-- AI-powered debate chat interface
-- User authentication and profiles
-- Saved sessions and notes
-- Customizable AI behavior
+- **AI Debate Chat**: Real-time AI-powered conversations with multiple debate modes
+- **Authentication**: Secure user auth with Supabase
+- **Session Management**: Save, resume, and organize debate sessions
+- **Customizable AI**: Adjust AI behavior, tone, and response depth
+- **Cross-Platform**: iOS, Android, and Web support
+
+## Development
+
+- **TypeScript**: Strict mode enabled
+- **Components**: Functional components with typed props
+- **Exports**: Named exports preferred
+- **Testing**: Jest + React Native Testing Library
+- **Linting**: ESLint + Prettier
+
+## Scripts
+
+- `npm start` - Start Expo development server
+- `npm run build` - Export production build
+- `npm test` - Run test suite
+- `npm run lint` - Run linter
+
+## Environment
+
+Configure environment variables for Supabase and API endpoints in your Expo configuration.
