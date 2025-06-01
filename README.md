@@ -2,6 +2,8 @@
 
 AI-powered debate platform that challenges users with follow-up questions, provides alternative perspectives, and creates engaging conversations.
 
+**Backend Repository**: [BrainBanter-Backend](https://github.com/Abhijeet03s/BrainBanter-Backend)
+
 ## Tech Stack
 
 - **Framework**: React Native + Expo (TypeScript)
@@ -66,3 +68,6 @@ src/
 ## Environment
 
 Configure environment variables for Supabase and API endpoints in your Expo configuration.
+
+
+
