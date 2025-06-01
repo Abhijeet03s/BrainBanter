@@ -9,21 +9,41 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "extra": {
-      "apiUrl": "https://brainbanter-backend.onrender.com"
+      "apiUrl": "https://brainbanter-backend.onrender.com",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e5ded922-9d89-434f-97a7-cc163c21ac63"
+      }
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.abhijeet03.brainbanter",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.abhijeet03.brainbanter"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./src/assets/images/favicon.png"
+      "favicon": "./src/assets/images/favicon.png",
+      "name": "BrainBanter",
+      "shortName": "BrainBanter",
+      "lang": "en",
+      "scope": "/",
+      "themeColor": "#000000",
+      "backgroundColor": "#ffffff",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/"
     },
     "plugins": [
       "expo-router",
@@ -39,6 +59,10 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/e5ded922-9d89-434f-97a7-cc163c21ac63"
     }
   }
 }
