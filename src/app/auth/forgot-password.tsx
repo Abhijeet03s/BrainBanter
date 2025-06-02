@@ -56,7 +56,7 @@ export default function ForgotPasswordScreen() {
                   <View className="items-center mb-8">
                      <View className="w-20 h-20 bg-[#00A3FF] rounded-2xl items-center justify-center mb-4">
                         <Image
-                           source={require('@/assets/images/icon.png')}
+                           source={require('../../../assets/images/icon.png')}
                            className="w-12 h-12"
                            resizeMode="contain"
                         />

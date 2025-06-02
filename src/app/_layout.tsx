@@ -19,24 +19,24 @@ export default function RootLayout() {
   // Restore all fonts with improved error handling
   const [fontsLoaded, fontError] = useFonts({
     // Primary font - Poppins
-    'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
-    'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
-    'Poppins-SemiBold': require('../assets/fonts/Poppins-SemiBold.ttf'),
-    'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+    'Poppins-Regular': require('../../assets/fonts/Poppins-Regular.ttf'),
+    'Poppins-Medium': require('../../assets/fonts/Poppins-Medium.ttf'),
+    'Poppins-SemiBold': require('../../assets/fonts/Poppins-SemiBold.ttf'),
+    'Poppins-Bold': require('../../assets/fonts/Poppins-Bold.ttf'),
 
     // Secondary font - Lora
-    'Lora-Regular': require('../assets/fonts/Lora-Regular.ttf'),
-    'Lora-Medium': require('../assets/fonts/Lora-Medium.ttf'),
-    'Lora-SemiBold': require('../assets/fonts/Lora-SemiBold.ttf'),
-    'Lora-Bold': require('../assets/fonts/Lora-Bold.ttf'),
+    'Lora-Regular': require('../../assets/fonts/Lora-Regular.ttf'),
+    'Lora-Medium': require('../../assets/fonts/Lora-Medium.ttf'),
+    'Lora-SemiBold': require('../../assets/fonts/Lora-SemiBold.ttf'),
+    'Lora-Bold': require('../../assets/fonts/Lora-Bold.ttf'),
 
     // Code/AI Output font - FiraCode
-    'FiraCode-Regular': require('../assets/fonts/FiraCode-Regular.ttf'),
-    'FiraCode-Medium': require('../assets/fonts/FiraCode-Medium.ttf'),
-    'FiraCode-SemiBold': require('../assets/fonts/FiraCode-SemiBold.ttf'),
+    'FiraCode-Regular': require('../../assets/fonts/FiraCode-Regular.ttf'),
+    'FiraCode-Medium': require('../../assets/fonts/FiraCode-Medium.ttf'),
+    'FiraCode-SemiBold': require('../../assets/fonts/FiraCode-SemiBold.ttf'),
 
     // Legacy font
-    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'SpaceMono': require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {

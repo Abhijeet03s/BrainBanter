@@ -103,7 +103,7 @@ export default function Auth({ mode = 'login' }: AuthProps) {
                         elevation: 10
                      }}>
                      <Image
-                        source={require('@/assets/images/brainbanter-logo.png')}
+                        source={require('../../../assets/images/brainbanter-logo.png')}
                         className="w-full h-full"
                         resizeMode="cover"
                      />
