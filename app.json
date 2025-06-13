@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "extra": {
       "apiUrl": "https://brainbanter-backend.onrender.com",
       "router": {
@@ -20,6 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.abhijeet03.brainbanter",
+      "deploymentTarget": "18.3",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -66,10 +67,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "runtimeVersion": "1.0.0",
-    "updates": {
-      "url": "https://u.expo.dev/e5ded922-9d89-434f-97a7-cc163c21ac63"
     }
   }
 }
