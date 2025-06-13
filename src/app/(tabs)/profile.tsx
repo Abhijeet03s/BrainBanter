@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAuth } from '@/contexts/AuthContext';
+import { getUserDisplayName } from '@/lib/utils';
 
 export default function ProfileScreen() {
    const insets = useSafeAreaInsets();
@@ -12,25 +13,7 @@ export default function ProfileScreen() {
    const router = useRouter();
    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-   // Safe way to get username
-   const getUserName = () => {
-      if (!user) return 'User';
-
-      // Check for username field from backend
-      if (user.username) return user.username;
-
-      // Get from user_metadata if available
-      const metadata = (user as any).user_metadata;
-      if (metadata?.full_name) return metadata.full_name;
-
-      // Get from email
-      const email = user.email;
-      if (email) return email.split('@')[0];
-
-      return 'User';
-   };
-
-   const userName = getUserName();
+   const userName = getUserDisplayName(user);
 
    // Handle logout
    const handleLogout = async () => {

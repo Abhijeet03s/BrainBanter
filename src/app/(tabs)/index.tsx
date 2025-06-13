@@ -8,6 +8,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAuth } from '@/contexts/AuthContext';
 import { GradientButton } from '@/components/ui/buttons/GradientButton';
 import { features } from '@/constants/Homepage';
+import { getUserDisplayName } from '@/lib/utils';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -30,25 +31,7 @@ export default function HomeScreen() {
     ]).start();
   }, []);
 
-  // Safe way to get username
-  const getUserName = () => {
-    if (!user) return 'User';
-
-    // Check for username field from backend
-    if (user.username) return user.username;
-
-    // Get from user_metadata if available
-    const metadata = (user as any).user_metadata;
-    if (metadata?.full_name) return metadata.full_name;
-
-    // Get from email
-    const email = user.email;
-    if (email) return email.split('@')[0];
-
-    return 'User';
-  };
-
-  const userName = getUserName();
+  const userName = getUserDisplayName(user);
 
   return (
     <View className="flex-1" style={{
