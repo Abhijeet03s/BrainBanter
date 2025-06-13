@@ -53,9 +53,9 @@ src/
 ## Screenshots
 
 <div align="center">
+  <img src="assets/images/screenshots/chat-interface.png" alt="Chat Interface" width="300"/>
   <img src="assets/images/screenshots/home-screen.png" alt="Home Screen" width="300"/>
   <img src="assets/images/screenshots/debate-screen.png" alt="Debate Screen" width="300"/>
-  <img src="assets/images/screenshots/chat-interface.png" alt="Chat Interface" width="300"/>
 </div>
 
 ## Development
